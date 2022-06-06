@@ -22,7 +22,7 @@ import { BudgetsService } from './services/budgets.service';
 const appRoutes: Routes = [
   { path: 'auth/signup', component: SignupComponent },
   { path: 'auth/signin', component: SigninComponent },
-  { path: 'home', canActivate: [AuthGuardService],component: BudgetHomeComponent },
+  { path: 'home',component: BudgetHomeComponent },
   { path: 'budgets', canActivate: [AuthGuardService], component: BudgetListComponent },
   { path: 'budgets/new', canActivate: [AuthGuardService], component: BudgetFormComponent },
   { path: 'budgets/view/:id', canActivate: [AuthGuardService], component: SingleBudgetComponent },

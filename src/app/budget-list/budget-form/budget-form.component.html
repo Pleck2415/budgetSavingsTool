@@ -1,6 +1,5 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a routerLink="home">Accueil</a></li>
         <li class="breadcrumb-item"><a routerLink="budgets">Liste des budgets</a></li>
         <li class="breadcrumb-item active" aria-current="page">Nouveau budget</li>
     </ol>
@@ -17,13 +16,13 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="dateFrom">Date début</label>
-                        <input type="text" id="dateFrom" class="form-control" formControlName="dateFrom">
+                        <input type="Date" id="dateFrom" class="form-control" formControlName="dateFrom">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="dateTo">Date fin</label>
-                        <input type="text" id="dateTo" class="form-control" formControlName="dateTo">
+                        <input type="date" id="dateTo" class="form-control" formControlName="dateTo">
                     </div>
                 </div>
             </div>

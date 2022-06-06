@@ -9,6 +9,19 @@
     </div>
     <body>
         <h3>Bienvevue</h3>
-        
+        <div *ngIf="!signin && !signup">
+            <app-signin></app-signin>
+        </div> 
+        <div *ngIf="signin">
+            <app-signin></app-signin>
+        </div> 
+        <div *ngIf="signup">
+            <app-signup></app-signup>
+        </div>
+        <div *ngIf="signin || !signup">
+            <div class="form-group">
+                <br><span>Pas inscrit?</span>&nbsp;&nbsp;<button type="button" class="btn btn-dark" (click)="goToSignup()">Créer un compte</button>
+            </div>
+        </div>         
     </body>
 </div>

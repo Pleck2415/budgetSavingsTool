@@ -18,6 +18,8 @@ export class SigninComponent implements OnInit {
               private router: Router) { }
 
   ngOnInit(): void {
+    this.authService.getHomeDisplay("signin");
+    this.router.navigate(['/home']);
     this.initForm();
   }
 
@@ -41,5 +43,4 @@ export class SigninComponent implements OnInit {
       }
     );
   }
-
 }

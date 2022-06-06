@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -20,7 +20,7 @@ export class AuthGuardService {
             if(user) {
               resolve(true);
             } else {
-              this.router.navigate(['/auth', 'signin']);
+              this.router.navigate(['/home']);
               resolve(false);
             }
           }

@@ -9,6 +9,9 @@ import 'firebase/compat/firestore';
 })
 export class AuthService {
 
+  signin: boolean = false;
+  signup: boolean = false;
+
   constructor() { }
 
   createNewUser(email: string, password: string) {
@@ -43,5 +46,15 @@ export class AuthService {
 
   signOutUser() {
     firebase.auth().signOut();
+   }
+
+   getHomeDisplay(type: string) {
+    if (type === "signin") {
+      this.signin = true;
+      this.signup = false;
+    } else {
+        this.signin = false;
+        this.signup = true;
+      }
    }
 }
