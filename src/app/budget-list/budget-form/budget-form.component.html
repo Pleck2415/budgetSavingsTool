@@ -1,0 +1,40 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a routerLink="home">Accueil</a></li>
+        <li class="breadcrumb-item"><a routerLink="budgets">Liste des budgets</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Nouveau budget</li>
+    </ol>
+</nav>
+<div class="row">
+    <div class="col-sm-8 col-sm-offset-2">
+        <h1>Budget et Économies</h1>
+        <form [formGroup]="budgetForm">
+            <div class="form-group">
+                <label for="title">Titre</label>
+                <input type="text" id="title" class="form-control" formControlName="title">
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="dateFrom">Date début</label>
+                        <input type="text" id="dateFrom" class="form-control" formControlName="dateFrom">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="dateTo">Date fin</label>
+                        <input type="text" id="dateTo" class="form-control" formControlName="dateTo">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="createdBy">Créé par</label>
+                        <input type="text" id="createdBy" class="form-control" formControlName="createdBy">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
