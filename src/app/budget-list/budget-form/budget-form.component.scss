@@ -1,0 +1,40 @@
+.line-1 {
+    margin-left: auto;
+    margin-right: auto;
+    color: rgb(200, 200, 200);
+    height: 5px;
+    width: 90%;
+}
+
+.incomes-table {
+    color: beige;
+    border: 4px solid rgb(200, 200, 200);
+    padding: 15px;
+}
+
+.incomes-th {
+    background-color: rgb(50, 50, 50);
+    color: beige;
+    border: 4px solid rgb(200, 200, 200);
+    padding-left: 15px;
+}
+
+.incomes-td {
+    color: beige;
+    border: 2px solid rgb(200, 200, 200);
+    padding-left: 15px;
+}
+
+.incomes-total {
+    background-color: rgb(37, 71, 37);
+    color: beige;
+    border: 4px solid rgb(200, 200, 200);
+    padding-left: 15px;
+}
+
+.expenses-total {
+    background-color: rgb(109, 30, 24);
+    color: beige;
+    border: 4px solid rgb(200, 200, 200);
+    padding-left: 15px;
+}
