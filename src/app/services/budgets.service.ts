@@ -26,6 +26,18 @@ export class BudgetsService {
     const description = frequencyObject.description;
     return description;
   }
+
+  getFrequencyId(frequency: string) {
+    var frequencyObject: any;
+    this.frequencyList.forEach(element => {
+      if (element.description == frequency) {
+        frequencyObject = element;
+      }
+    });    
+    const freqID = frequencyObject.id;
+    return freqID;
+  }
+
   
   convertToAnnualIncomes(amount: number, frequencyID: number) {
     var annualAmount: number = 0;
@@ -58,7 +70,7 @@ export class BudgetsService {
     return annualAmount;
   }
 
-  getAnnualTotal(incomesList) {
+  getAnnualTotal(incomesList: any[]) {
     var total: number = 0;
     incomesList.forEach(element => {
       total += element.annual;

@@ -38,8 +38,31 @@
             </div>
             <hr class="line-1">
             <div class="row">
-                <h3 style="color: rgb(37, 71, 37);">Revenus</h3>
-                <table class="incomes-table">
+                <h3 style="color: rgb(42, 131, 42);">Revenus</h3>
+                <ag-grid-angular #incomesGrid
+                    class="ag-theme-balham" 
+                    [rowData]="incomesRowData" 
+                    [columnDefs]="incomesColumnDefs"
+                    [groupIncludeTotalFooter]="true"
+                    [pagination]="true"
+                    [paginationPageSize]="25"
+                    rowSelection="single"
+                    (cellValueChanged)="incomeCellValueChanged($event)"
+                    (gridReady)="onIncomesGridReady($event)">
+                </ag-grid-angular>
+            </div>
+            <div class="row">
+                <div class="col-md-6"></div>
+                <div class="col-md-2">
+                    <table>
+                        <tr>
+                            <td class="incomes-total">Total :</td>
+                            <td class="incomes-total">{{incomesTotal}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+                <!-- <table class="incomes-table">
                     <tr >
                         <th class="incomes-th">Type de revenu</th>
                         <th class="incomes-th">Montant</th>
@@ -58,12 +81,22 @@
                         <td class="incomes-total">Total :</td>
                         <td class="incomes-total">{{incomesTotal}}</td>
                     </tr>
-                </table>
-            </div>
+                </table> -->
+
             <hr class="line-1">
             <div class="row">
-                <h3 style="color: rgb(109, 30, 24);">Dépenses</h3>
-                <table class="incomes-table">
+                <h3 style="color: rgb(200, 32, 20);">Dépenses</h3>
+                <ag-grid-angular #expensesGrid
+                    class="ag-theme-balham" 
+                    [rowData]="expensesRowData" 
+                    [columnDefs]="expensesColumnDefs"
+                    [pagination]="true"
+                    [paginationPageSize]="25"
+                    rowSelection="single"
+                    (selectionChanged)="openSelectedExpense()"
+                    (gridReady)="onExpensesGridReady($event)">
+                </ag-grid-angular>
+                <!-- <table class="incomes-table">
                     <tr >
                         <th class="incomes-th">Type de dépense</th>
                         <th class="incomes-th">Montant</th>
@@ -82,7 +115,7 @@
                         <td class="expenses-total">Total :</td>
                         <td class="expenses-total">{{expensesTotal}}</td>
                     </tr>
-                </table>
+                </table> -->
             </div>
         </form>
     </div>
