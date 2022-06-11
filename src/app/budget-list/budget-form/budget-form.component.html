@@ -5,118 +5,162 @@
     </ol>
 </nav>
 <div class="row">
-    <div class="col-sm-8 col-sm-offset-2">
-        <h1>Budget et Économies</h1>
+    <div class="col-md-12">
+        <h1 style="text-align: center;">Budget et Économies</h1>
         <form [formGroup]="budgetForm">
             <div class="row">
-                <div class="form-group">
-                    <label for="title">Titre</label>
-                    <input type="text" id="title" class="form-control" formControlName="title">
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="dateFrom">Date début</label>
-                            <input type="Date" id="dateFrom" class="form-control" formControlName="dateFrom">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="title">Titre</label>
+                        <input type="text" id="title" class="form-control" formControlName="title">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="dateFrom">Date début</label>
+                                <input type="Date" id="dateFrom" class="form-control" formControlName="dateFrom">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="dateTo">Date fin</label>
+                                <input type="date" id="dateTo" class="form-control" formControlName="dateTo">
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="createdBy">Créé par</label>
+                                <input type="text" id="createdBy" class="form-control" formControlName="createdBy">
+                            </div>                            
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <textarea id="description" class="form-control" formControlName="description"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="line-1">
+                    <div class="row">
                         <div class="form-group">
-                            <label for="dateTo">Date fin</label>
-                            <input type="date" id="dateTo" class="form-control" formControlName="dateTo">
+                            <div class="col-md-12" style="text-align:center;">
+                                <span>Tables de pilotage</span> 
+                            </div> 
+                        </div>
+                        <div class="col-md-6"> 
+                            <button class="control-table" (click)="openControlTable('budget-entry-types')">budget-entry-types</button>
+                        </div>
+                    </div>
+                    <hr class="line-1">
+                    <div class="row">
+                        <div class="col-md-6"> 
+                            <button class="btn btn-dark btn-add" (click)="openAddEntry('Revenus')"><i class="glyphicon glyphicon-plus"></i>&nbsp;Revenus</button>
+                        </div>
+                        <div class="col-md-6">
+                            <button class="btn btn-dark btn-add" (click)="openAddEntry('Dépenses')"><i class="glyphicon glyphicon-plus"></i>&nbsp;Dépenses</button>
+                        </div>
+                    </div>
+                    <div class="row" *ngIf="openEntryForm">
+                        <div class="form-group">
+                            <div class="col-md-12" style="text-align:center;">
+                                <h3>{{entryType}} - Nouvelle entrée</h3> 
+                            </div> 
+                        </div>
+                        <!-- <div> -->
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-4">
+                                        <label for="type">Type : </label>
+                                    </div>
+                                    <div class="col-md-8">                            
+                                        <select id="type" class="form-control" (change)="onChangeType($event)">
+                                            <option value="" selected="selected">--Sélectionnez--</option>
+                                            <option *ngFor="let type of bugetEntryTypes" Value="type.description">{{type.description}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-4">
+                                        <label for="amount">Montant : </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="number" min="1" id="amount" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-4">
+                                        <label for="frequency">Fréquence : </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" id="frequency" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        <!-- </div> -->
+                        <div>
+                            <div class="form-group">
+                                <button type="button" class="btn btn-dark btn-add" (click)="addEntry()">Soumettre</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="createdBy">Créé par</label>
-                            <input type="text" id="createdBy" class="form-control" formControlName="createdBy">
-                        </div>
+                <div class="col-md-8">
+                    <div class="row">
+                        <h3 style="color: rgb(42, 131, 42);">Revenus</h3>
+                        <table>
+                            <tr>
+                                <ag-grid-angular #incomesGrid
+                                    class="ag-theme-balham" 
+                                    [rowData]="incomesRowData" 
+                                    [columnDefs]="incomesColumnDefs"
+                                    [pagination]="true"
+                                    [paginationPageSize]="25"                  
+                                    (cellValueChanged)="incomeCellValueChanged($event)"
+                                    (gridReady)="onIncomesGridReady($event)">
+                                </ag-grid-angular>
+                            </tr>
+                        </table>
+                        <table>
+                            <tr>
+                                <td class="incomes-total-left"></td>
+                                <td class="incomes-total-left" style="width: 75px;">Total :</td>
+                                <td class="incomes-total" style="width: 150px; text-align: right;padding-right: 10px;">{{incomesTotal}}</td>
+                            </tr>
+                        </table>
                     </div>
-                </div>
-            </div>
-            <hr class="line-1">
-            <div class="row">
-                <h3 style="color: rgb(42, 131, 42);">Revenus</h3>
-                <ag-grid-angular #incomesGrid
-                    class="ag-theme-balham" 
-                    [rowData]="incomesRowData" 
-                    [columnDefs]="incomesColumnDefs"
-                    [groupIncludeTotalFooter]="true"
-                    [pagination]="true"
-                    [paginationPageSize]="25"
-                    rowSelection="single"
-                    (cellValueChanged)="incomeCellValueChanged($event)"
-                    (gridReady)="onIncomesGridReady($event)">
-                </ag-grid-angular>
-            </div>
-            <div class="row">
-                <div class="col-md-6"></div>
-                <div class="col-md-2">
-                    <table>
-                        <tr>
-                            <td class="incomes-total">Total :</td>
-                            <td class="incomes-total">{{incomesTotal}}</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-                <!-- <table class="incomes-table">
-                    <tr >
-                        <th class="incomes-th">Type de revenu</th>
-                        <th class="incomes-th">Montant</th>
-                        <th class="incomes-th">Fréquence</th>
-                        <th class="incomes-th">Annuel</th>
-                    </tr>
-                    <tr *ngFor="let item of incomesList">
-                        <td class="incomes-td">{{item.type}}</td>
-                        <td class="incomes-td">{{item.amount}}</td>
-                        <td class="incomes-td">{{item.frequency}}</td>
-                        <td class="incomes-td">{{item.annual}}</td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td class="incomes-total">Total :</td>
-                        <td class="incomes-total">{{incomesTotal}}</td>
-                    </tr>
-                </table> -->
-
-            <hr class="line-1">
-            <div class="row">
-                <h3 style="color: rgb(200, 32, 20);">Dépenses</h3>
-                <ag-grid-angular #expensesGrid
-                    class="ag-theme-balham" 
-                    [rowData]="expensesRowData" 
-                    [columnDefs]="expensesColumnDefs"
-                    [pagination]="true"
-                    [paginationPageSize]="25"
-                    rowSelection="single"
-                    (selectionChanged)="openSelectedExpense()"
-                    (gridReady)="onExpensesGridReady($event)">
-                </ag-grid-angular>
-                <!-- <table class="incomes-table">
-                    <tr >
-                        <th class="incomes-th">Type de dépense</th>
-                        <th class="incomes-th">Montant</th>
-                        <th class="incomes-th">Fréquence</th>
-                        <th class="incomes-th">Annuel</th>
-                    </tr>
-                    <tr *ngFor="let item of expensesList">
-                        <td class="incomes-td">{{item.type}}</td>
-                        <td class="incomes-td">{{item.amount}}</td>
-                        <td class="incomes-td">{{item.frequency}}</td>
-                        <td class="incomes-td">{{item.annual}}</td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td class="expenses-total">Total :</td>
-                        <td class="expenses-total">{{expensesTotal}}</td>
-                    </tr>
-                </table> -->
-            </div>
+                    <div class="row">
+                        <h3 style="color: rgb(200, 32, 20);">Dépenses</h3>
+                        <table>
+                            <tr>
+                                <ag-grid-angular #expensesGrid
+                                    class="ag-theme-balham" 
+                                    [rowData]="expensesRowData" 
+                                    [columnDefs]="expensesColumnDefs"
+                                    [pagination]="true"
+                                    [paginationPageSize]="25"
+                                    (selectionChanged)="openSelectedExpense()"
+                                    (gridReady)="onExpensesGridReady($event)">
+                                </ag-grid-angular>
+                            </tr>
+                        </table>
+                        <table>
+                            <tr>
+                                <td class="incomes-total-left"></td>
+                                <td class="incomes-total-left" style="width: 75px;">Total :</td>
+                                <td class="expenses-total" style="width: 150px; text-align: right;padding-right: 10px;">{{expensesTotal}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>                
+            </div>            
         </form>
     </div>
 </div>

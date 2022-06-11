@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Budget } from '../models/budget.model';
 
 @Injectable({
   providedIn: 'root'
@@ -77,4 +78,10 @@ export class BudgetsService {
     });
     return total;
   }
+
+  saveBudget(budget: Budget) {
+    // this.nextCampaignID = campaign.cmID + 1;
+    // firebase.database().ref("campaigns/" + campaign.cmID + "/" ).set(campaign);
+  }  
+
 }

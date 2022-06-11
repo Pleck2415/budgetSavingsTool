@@ -5,6 +5,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes } from '@angular/router';
 import { AgGridModule } from 'ag-grid-angular';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
 
 import { AppComponent } from './app.component';
 
@@ -20,6 +22,8 @@ import { BudgetFormComponent } from './budget-list/budget-form/budget-form.compo
 import { AuthService } from './services/auth.service';
 import { AuthGuardService } from './services/auth-guard.service';
 import { BudgetsService } from './services/budgets.service';
+import { BudgetEntryTypesComponent } from './budget-list/budget-entry-types/budget-entry-types.component';
+
 
 const appRoutes: Routes = [
   { path: 'auth/signup', component: SignupComponent },
@@ -28,6 +32,7 @@ const appRoutes: Routes = [
   { path: 'budgets', canActivate: [AuthGuardService], component: BudgetListComponent },
   { path: 'budgets/new', canActivate: [AuthGuardService], component: BudgetFormComponent },
   { path: 'budgets/view/:id', canActivate: [AuthGuardService], component: SingleBudgetComponent },
+  { path: 'budget-entry-types', canActivate: [AuthGuardService], component: BudgetEntryTypesComponent },
   { path: '', redirectTo: 'budgets', pathMatch: 'full' },
   { path: '**', redirectTo: 'budgets' }
 ];
@@ -41,18 +46,21 @@ const appRoutes: Routes = [
     SingleBudgetComponent,
     BudgetFormComponent,
     BudgetHomeComponent,
+    BudgetEntryTypesComponent,
   ],
   imports: [
-    BrowserModule,
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
+    MatButtonToggleModule,
+    ModalModule.forRoot(),
     AgGridModule.withComponents([]),
     HttpClientModule,
     RouterModule.forRoot(appRoutes)
   ],
   providers: [AuthService, AuthGuardService, BudgetsService],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [BudgetFormComponent]
 })
 export class AppModule { }

@@ -1,0 +1,72 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a routerLink="budgets">Liste des budgets</a></li>
+        <li class="breadcrumb-item"><a routerLink="budgets/new">Nouveau budget</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Types d'entrée au budget</li>
+    </ol>
+</nav>
+<div class="row">
+    <h2 style="text-align: center;">Types d'entrée au budget</h2>
+</div>
+<div class="row">
+    <div class="col-md-6 ct-border_1">
+        <ag-grid-angular #controlTableGrid
+            class="ag-theme-balham" 
+            [rowData]="rowData" 
+            [columnDefs]="rolumnDefs"
+            [pagination]="true"
+            [paginationPageSize]="15"
+            rowSelection="single"
+            (selectionChanged)="openSelectedElement()"                  
+            (gridReady)="onGridReady($event)">
+        </ag-grid-angular>
+    </div>
+    <div class="col-md-6 ct-border_2">
+        <form [formGroup]="budgetEntryTypeForm" >
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="ct-tool-bar">
+                        <button type="button" class="btn btn-toolBar" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Supprimer"
+                            (click)="deleteEntry()" [disabled]="budgetEntryTypeForm.invalid"><i class="glyphicon glyphicon-trash"></i>&nbsp;|</button>
+                            <button type="button" class="btn btn-toolBar" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Nouveau"
+                            (click)="clearEntry()"><i class="glyphicon glyphicon-file"></i>&nbsp;|</button>
+                        <button type="submit" id="save" class="btn btn-toolBar" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Enregistrer"
+                            (click)="onSubmitForm()" [disabled]="budgetEntryTypeForm.invalid"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="row ct-form">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="entryId">ID</label>
+                        <input type="number" id="entryId" min="0" class="form-control my-id" formControlName="entryId">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <input type="text" id="description" class="form-control" formControlName="description">
+                        <span style="color:rgb(220, 50, 35); font-size: 14px;" *ngIf="errorField !=''"><i class="glyphicon glyphicon-info-sign"></i>&nbsp;{{errorField}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row ct-form">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="active">&nbsp;Actif</label><br>
+                        <mat-button-toggle-group name="active" formControlName="active" aria-label="Actif" (change)="onValChange($event.value)">
+                            <mat-button-toggle value="Oui">Oui</mat-button-toggle>
+                            <mat-button-toggle value="Non">Non</mat-button-toggle>
+                        </mat-button-toggle-group>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="row">
+                <div class="col-md-6">
+                    <button type="submit" class="btn btn-dark" (click)="onSubmitForm()">Sauvegarder</button>
+                </div>
+            </div> -->
+        </form>
+    </div>
+</div>
+

@@ -1,9 +1,22 @@
 .line-1 {
     margin-left: auto;
     margin-right: auto;
-    color: beige;
-    height: 5px;
+    color: white;
+    height: 2px;
     width: 90%;
+}
+
+input {
+    height: 30px;
+}
+
+.btn-add {
+    min-width: 125px;
+}
+
+.control-table {
+  border: none;
+  background: transparent;
 }
 
 .incomes-table {
@@ -32,6 +45,14 @@
     padding-left: 15px;
 }
 
+.incomes-total-left {
+    background-color: rgb(125, 125, 125);
+    color: beige;
+    border: 1px solid rgb(200, 200, 200);
+    padding-left: 15px;
+    font-weight: bolder;
+}
+
 .expenses-total {
     background-color: rgb(109, 30, 24);
     color: beige;
@@ -40,8 +61,7 @@
 }
 
 .ag-theme-balham {
-    min-width: 300px; 
-    max-width: 1500px;
+    width: 100%;
     height: 250px; 
     // border: 2px solid black;
     // border-radius: 5px;
