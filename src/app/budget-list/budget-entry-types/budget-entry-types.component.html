@@ -36,18 +36,27 @@
                 </div>
             </div>
             <div class="row ct-form">
-                <div class="col-md-6">
+                <div class="col-md-12">
                     <div class="form-group">
                         <label for="entryId">ID</label>
                         <input type="number" id="entryId" min="0" class="form-control my-id" formControlName="entryId">
                     </div>
                 </div>
+            </div>
+            <div class="row ct-form">
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="description">Description</label>
                         <input type="text" id="description" class="form-control" formControlName="description">
                         <span style="color:rgb(220, 50, 35); font-size: 14px;" *ngIf="errorField !=''"><i class="glyphicon glyphicon-info-sign"></i>&nbsp;{{errorField}}</span>
                     </div>
+                </div>
+                <div class="col-md-6">  
+                    <label for="typeId">Type d'entrée</label>                          
+                    <select id="typeId" class="form-control" formControlName="typeId">
+                        <option value="" selected="selected">--Sélectionnez--</option>
+                        <option *ngFor="let type of entryTypes; let indexOfelement=index;" value="{{type.id}}">{{type.description}}</option>
+                    </select>
                 </div>
             </div>
             <div class="row ct-form">

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { on } from 'events';
 import { ControlTableService } from 'src/app/services/control-table.service';
 
 @Component({
@@ -12,11 +11,11 @@ export class BudgetEntryTypesComponent implements OnInit {
 
   budgetEntryTypeForm: FormGroup;
   activeEntryValue: string = "Non";
-  elementObject = {entryId: 0, description: "", active: this.activeEntryValue};
+  elementObject = {entryId: 0, description: "", typeId: null, active: this.activeEntryValue};
   elementsList: any[] = [];
   elementObjectLoaded: boolean = false;
+  entryTypes= new Array();
   errorField: string = "";
-
  
   constructor(private formBuilder: FormBuilder, private controlTableService: ControlTableService) { }
 
@@ -25,10 +24,12 @@ export class BudgetEntryTypesComponent implements OnInit {
   rolumnDefs = [
     {headerName: 'ID', field: 'entryId', width: 100, resizable: true },
     {headerName: 'Description', field: 'description', width: 300, sortable: true, filter: true, resizable: true },
+    {headerName: 'Type', field: 'type', width: 150, sortable: true, filter: true, resizable: true },
     {headerName: 'Actif', field: 'active', width: 100, sortable: true, filter: true },
   ];
 
   ngOnInit(): void {
+    this.getEntryTypesList();
     this.getSavedElementsList();
     this.disableField();
     this.initForm();
@@ -40,12 +41,22 @@ export class BudgetEntryTypesComponent implements OnInit {
     this.budgetEntryTypeForm = this.formBuilder.group({
       entryId: [ entryObject.entryId, Validators.required ],
       description: [ entryObject.description, Validators.required ],
+      typeId: [ entryObject.typeId, Validators.required ],
       active: [ entryObject.active, Validators.required ]
     });
     if (this.elementObject.description === "") {
       this.elementObjectLoaded = false;
     }
     this.disableField();
+  }
+
+  getEntryTypesList() {
+    this.entryTypes = [];
+    const entryTypes = this.controlTableService.entryTypes;
+    entryTypes.forEach(element => {
+      this.entryTypes.push(element);      
+    });
+    console.log("Entry types list: ", this.entryTypes);
   }
 
   disableField() {
@@ -63,9 +74,10 @@ export class BudgetEntryTypesComponent implements OnInit {
     var nextID: number = 0;
     nextID = this.controlTableService.getElementNextID(tableName);
     const description = document.getElementById('description')['value'];
+    const type = document.getElementById('type')['value'];
     const active = this.activeEntryValue;
     if (this.controlTableService.uniqueField(tableName, description)) {
-      this.elementObject = {entryId: nextID, description: description, active: active};
+      this.elementObject = {entryId: nextID, description: description, typeId: type, active: active};
       this.controlTableService.saveNewElement(tableName, this.elementObject, nextID);
       this.elementObjectLoaded = true;
       this.initForm();
@@ -79,9 +91,12 @@ export class BudgetEntryTypesComponent implements OnInit {
   
   loadGridsData() {
     var elementArray = new Array();
+    // var typeDescription: string = "";
     elementArray = [];
     this.elementsList.forEach(element => {
-      elementArray.push(element);
+      // typeDescription = this.controlTableService.getTypeDescription(element.typeId);
+      var elementObject = {entryId: element.entryId , description: element.description, type: this.controlTableService.getTypeDescription(element.typeId), active: element.active};
+      elementArray.push(elementObject);
     });
     this.rowData = elementArray;
   }
@@ -97,7 +112,7 @@ export class BudgetEntryTypesComponent implements OnInit {
     this.activeEntryValue = "Non";
     const nextID = this.controlTableService.getElementNextID(tableName);
     this.elementObjectLoaded = false;
-    this.elementObject = {entryId: nextID, description: "", active: this.activeEntryValue};
+    this.elementObject = {entryId: nextID, description: "", typeId: null, active: this.activeEntryValue};
     this.initForm();
   }
 
@@ -120,7 +135,7 @@ export class BudgetEntryTypesComponent implements OnInit {
     if(selectedRow[0] === undefined) {
       alert("Pas de type sélectionné!");
     } else {
-      this.elementObject = {entryId: +selectedRow[0].entryId, description: selectedRow[0].description, active: selectedRow[0].active};
+      this.elementObject = {entryId: +selectedRow[0].entryId, description: selectedRow[0].description, typeId: selectedRow[0].typeId, active: selectedRow[0].active};
       this.elementObjectLoaded = true;
       this.initForm();
       }

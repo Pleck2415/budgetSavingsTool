@@ -69,6 +69,8 @@ export class BudgetFormComponent implements OnInit {
       description: [null],
       dateFrom: [null],
       dateTo: [null],
+      incomes: [null],
+      expenses: [null]
     });
   }
 

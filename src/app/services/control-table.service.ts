@@ -8,6 +8,10 @@ import 'firebase/compat/database';
 export class ControlTableService {
 
   elementNextID: number = 0;
+  entryTypes: [
+    {id: 0, description: "Dépense"}, 
+    {id: 1, description: "Revenu"}, 
+  ];
   
   constructor() { }
 
@@ -26,6 +30,16 @@ export class ControlTableService {
       });
     });
     return elementList;
+  }
+
+  getTypeDescription(id: number) {
+    var description: string = "";
+    this.entryTypes.forEach(element => {
+      if (element.id == id) {
+        description = element.description;
+      }
+    });
+    return description;
   }
 
   getElementNextID(tableName: string) {     
