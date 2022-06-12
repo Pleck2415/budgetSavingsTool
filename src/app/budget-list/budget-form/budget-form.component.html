@@ -58,10 +58,10 @@
                     <hr class="line-1">
                     <div class="row">
                         <div class="col-md-6"> 
-                            <button class="btn btn-dark btn-add" (click)="openAddEntry('Revenus')"><i class="glyphicon glyphicon-plus"></i>&nbsp;Revenus</button>
+                            <button class="btn btn-dark btn-add" (click)="openAddEntry('incomes')"><i class="glyphicon glyphicon-plus"></i>&nbsp;Revenus</button>
                         </div>
                         <div class="col-md-6">
-                            <button class="btn btn-dark btn-add" (click)="openAddEntry('Dépenses')"><i class="glyphicon glyphicon-plus"></i>&nbsp;Dépenses</button>
+                            <button class="btn btn-dark btn-add" (click)="openAddEntry('expenses')"><i class="glyphicon glyphicon-plus"></i>&nbsp;Dépenses</button>
                         </div>
                     </div>
                     <div class="row" *ngIf="openEntryForm">
@@ -77,9 +77,9 @@
                                         <label for="type">Type : </label>
                                     </div>
                                     <div class="col-md-8">                            
-                                        <select id="type" class="form-control" (change)="onChangeType($event)">
+                                        <select id="type" class="form-control" (change)="onChangeType()">
                                             <option value="" selected="selected">--Sélectionnez--</option>
-                                            <option *ngFor="let type of bugetEntryTypes" Value="type.description">{{type.description}}</option>
+                                            <option *ngFor="let type of bugetEntryTypes; let indexOfelement=index;" value="{{type.entryId}}">{{type.description}}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -100,7 +100,10 @@
                                         <label for="frequency">Fréquence : </label>
                                     </div>
                                     <div class="col-md-8">
-                                        <input type="text" id="frequency" class="form-control">
+                                        <select id="frequency" class="form-control" (change)="onChangeFrequency()">
+                                            <option value="" selected="selected">--Sélectionnez--</option>
+                                            <option *ngFor="let frequency of budgetEntryFrequecies; let indexOfelement=index;" value="{{frequency.id}}">{{frequency.description}}</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>

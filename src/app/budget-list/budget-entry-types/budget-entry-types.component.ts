@@ -120,7 +120,7 @@ export class BudgetEntryTypesComponent implements OnInit {
     if(selectedRow[0] === undefined) {
       alert("Pas de type sélectionné!");
     } else {
-      this.elementObject = {entryId: selectedRow[0].entryId, description: selectedRow[0].description, active: selectedRow[0].active};
+      this.elementObject = {entryId: +selectedRow[0].entryId, description: selectedRow[0].description, active: selectedRow[0].active};
       this.elementObjectLoaded = true;
       this.initForm();
       }

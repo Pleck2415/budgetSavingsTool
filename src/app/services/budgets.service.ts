@@ -39,8 +39,19 @@ export class BudgetsService {
     return freqID;
   }
 
+  getEntryTypeDescription(id: number, list: any) {
+    var description: string = "";
+    list.forEach(element => {
+      if (element.entryId == id) {
+        description = element.description;
+      }
+    });
+    return description;
+  }
+
   
   convertToAnnualIncomes(amount: number, frequencyID: number) {
+    console.log("In convert amount: ", amount, " frequency: ", frequencyID );
     var annualAmount: number = 0;
     switch (frequencyID) {
       case(0):{
