@@ -14,7 +14,8 @@ export class BudgetEntryTypesComponent implements OnInit {
   elementObject = {entryId: 0, description: "", typeId: null, active: this.activeEntryValue};
   elementsList: any[] = [];
   elementObjectLoaded: boolean = false;
-  entryTypes= new Array();
+  entryTypes = [{id: null, description: ""}];
+
   errorField: string = "";
  
   constructor(private formBuilder: FormBuilder, private controlTableService: ControlTableService) { }
@@ -22,17 +23,17 @@ export class BudgetEntryTypesComponent implements OnInit {
   private gridApi;
   rowData: any[] = [];
   rolumnDefs = [
-    {headerName: 'ID', field: 'entryId', width: 100, resizable: true },
-    {headerName: 'Description', field: 'description', width: 300, sortable: true, filter: true, resizable: true },
+    {headerName: 'ID', field: 'entryId', width: 50, resizable: true },
+    {headerName: 'Description', field: 'description', width: 275, sortable: true, filter: true, resizable: true },
     {headerName: 'Type', field: 'type', width: 150, sortable: true, filter: true, resizable: true },
-    {headerName: 'Actif', field: 'active', width: 100, sortable: true, filter: true },
+    {headerName: 'Actif', field: 'active', width: 75, sortable: true, filter: true },
   ];
 
   ngOnInit(): void {
+    this.initForm();
     this.getEntryTypesList();
     this.getSavedElementsList();
     this.disableField();
-    this.initForm();
   }
 
   initForm() {    
@@ -51,12 +52,10 @@ export class BudgetEntryTypesComponent implements OnInit {
   }
 
   getEntryTypesList() {
-    this.entryTypes = [];
-    const entryTypes = this.controlTableService.entryTypes;
-    entryTypes.forEach(element => {
-      this.entryTypes.push(element);      
-    });
-    console.log("Entry types list: ", this.entryTypes);
+    this.entryTypes = [
+      {id: 0, description: "Dépense"}, 
+      {id: 1, description: "Revenu"}
+    ];
   }
 
   disableField() {
@@ -74,10 +73,10 @@ export class BudgetEntryTypesComponent implements OnInit {
     var nextID: number = 0;
     nextID = this.controlTableService.getElementNextID(tableName);
     const description = document.getElementById('description')['value'];
-    const type = document.getElementById('type')['value'];
+    const type = document.getElementById('typeId')['value'];
     const active = this.activeEntryValue;
     if (this.controlTableService.uniqueField(tableName, description)) {
-      this.elementObject = {entryId: nextID, description: description, typeId: type, active: active};
+      this.elementObject = {entryId: nextID, description: description, typeId: +type, active: active};
       this.controlTableService.saveNewElement(tableName, this.elementObject, nextID);
       this.elementObjectLoaded = true;
       this.initForm();
@@ -95,7 +94,7 @@ export class BudgetEntryTypesComponent implements OnInit {
     elementArray = [];
     this.elementsList.forEach(element => {
       // typeDescription = this.controlTableService.getTypeDescription(element.typeId);
-      var elementObject = {entryId: element.entryId , description: element.description, type: this.controlTableService.getTypeDescription(element.typeId), active: element.active};
+      var elementObject = {entryId: element.entryId , description: element.description, type: this.controlTableService.getTypeDescription(element.typeId, this.entryTypes), active: element.active};
       elementArray.push(elementObject);
     });
     this.rowData = elementArray;
@@ -135,7 +134,7 @@ export class BudgetEntryTypesComponent implements OnInit {
     if(selectedRow[0] === undefined) {
       alert("Pas de type sélectionné!");
     } else {
-      this.elementObject = {entryId: +selectedRow[0].entryId, description: selectedRow[0].description, typeId: selectedRow[0].typeId, active: selectedRow[0].active};
+      this.elementObject = {entryId: +selectedRow[0].entryId, description: selectedRow[0].description, typeId: this.controlTableService.getTypeId(selectedRow[0].type, this.entryTypes), active: selectedRow[0].active};
       this.elementObjectLoaded = true;
       this.initForm();
       }

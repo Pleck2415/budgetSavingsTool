@@ -51,8 +51,8 @@
                                 <span>Tables de pilotage</span> 
                             </div> 
                         </div>
-                        <div class="col-md-6"> 
-                            <button class="control-table" (click)="openControlTable('budget-entry-types')">budget-entry-types</button>
+                        <div class="col-md-12"> 
+                            <button class="control-table" (click)="openControlTable('budget-entry-types')">- Types d'entrées au budget</button>
                         </div>
                     </div>
                     <hr class="line-1">
@@ -67,7 +67,7 @@
                     <div class="row" *ngIf="openEntryForm">
                         <div class="form-group">
                             <div class="col-md-12" style="text-align:center;">
-                                <h3>{{entryType}} - Nouvelle entrée</h3> 
+                                <h3>{{entryTypeFR}} - Nouvelle entrée</h3> 
                             </div> 
                         </div>
                         <!-- <div> -->
@@ -107,7 +107,13 @@
                                     </div>
                                 </div>
                             </div>
-                        <!-- </div> -->
+                            <div class="row" *ngIf="errorField !=''">
+                                <div class="form-group">
+                                    <div class="col-md-4">
+                                        <span style="color:rgb(220, 50, 35); font-size: 14px;"><i class="glyphicon glyphicon-info-sign"></i>&nbsp;{{errorField}}</span>
+                                    </div>
+                                </div>
+                            </div>
                         <div>
                             <div class="form-group">
                                 <button type="button" class="btn btn-dark btn-add" (click)="addEntry()">Soumettre</button>

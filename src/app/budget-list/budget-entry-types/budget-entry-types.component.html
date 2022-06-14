@@ -36,7 +36,7 @@
                 </div>
             </div>
             <div class="row ct-form">
-                <div class="col-md-12">
+                <div class="col-md-6">
                     <div class="form-group">
                         <label for="entryId">ID</label>
                         <input type="number" id="entryId" min="0" class="form-control my-id" formControlName="entryId">
@@ -55,7 +55,7 @@
                     <label for="typeId">Type d'entrée</label>                          
                     <select id="typeId" class="form-control" formControlName="typeId">
                         <option value="" selected="selected">--Sélectionnez--</option>
-                        <option *ngFor="let type of entryTypes; let indexOfelement=index;" value="{{type.id}}">{{type.description}}</option>
+                        <option *ngFor="let item of entryTypes;" value="{{item.id}}">{{item.description}}</option>
                     </select>
                 </div>
             </div>

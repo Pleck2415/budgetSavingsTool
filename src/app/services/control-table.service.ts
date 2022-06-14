@@ -8,10 +8,6 @@ import 'firebase/compat/database';
 export class ControlTableService {
 
   elementNextID: number = 0;
-  entryTypes: [
-    {id: 0, description: "Dépense"}, 
-    {id: 1, description: "Revenu"}, 
-  ];
   
   constructor() { }
 
@@ -25,21 +21,32 @@ export class ControlTableService {
       data.forEach(function(data) {
         var elementId = data.val().entryId;
         var description = data.val().description;
+        var typeId = data.val().typeId;
         var active = data.val().active;
-        elementList.push({entryId: elementId, description: description, active: active});
+        elementList.push({entryId: elementId, description: description, typeId: typeId, active: active});
       });
     });
     return elementList;
   }
 
-  getTypeDescription(id: number) {
+  getTypeDescription(id: number, typesList: any) {
     var description: string = "";
-    this.entryTypes.forEach(element => {
+    typesList.forEach(element => {
       if (element.id == id) {
         description = element.description;
       }
     });
     return description;
+  }
+
+  getTypeId(description: string, typesList: any) {
+    var myId: number = 0;
+    typesList.forEach(element => {
+      if (element.description == description) {
+        myId = element.id;
+      }
+    });
+    return myId;
   }
 
   getElementNextID(tableName: string) {     

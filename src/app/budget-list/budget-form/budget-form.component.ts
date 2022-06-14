@@ -19,8 +19,10 @@ export class BudgetFormComponent implements OnInit {
   // modalRef: BsModalRef;
   openEntryForm: boolean = false;
   entryType: string;
+  entryTypeFR: string;
   bugetEntryTypes = new Array();
   budgetEntryFrequecies = new Array();
+  errorField: string = "";
 
   newEntry: Entry;
   currentEntryTypeId: number = 0;
@@ -57,7 +59,7 @@ export class BudgetFormComponent implements OnInit {
     this.initForm();
     // this.onInitEntryForm();
     this.budgetEntryFrequecies = this.bugetService.frequencyList;
-    this.bugetEntryTypes = this.cTService.getTableElements("budgetEntryTypes");
+    this.getBudgetEntryTypes();
     this.getAnnulalTotal();
     this.loadGridsData();
   }
@@ -72,6 +74,10 @@ export class BudgetFormComponent implements OnInit {
       incomes: [null],
       expenses: [null]
     });
+  }
+
+  getBudgetEntryTypes() {
+    this.bugetEntryTypes = this.cTService.getTableElements("budgetEntryTypes");
   }
 
   getAnnulalTotal() {
@@ -123,28 +129,51 @@ export class BudgetFormComponent implements OnInit {
   }
 
   openAddEntry(type: string) {
+    this.currentEntryTypeId = null;
+    this.currentEntryFrequencyId = null;
+    this.getBudgetEntryTypes();
     this.openEntryForm = true;
     this.entryType = type;
+    var typeID: number = 0;
+    if (this.entryType === "incomes") {
+      this.entryTypeFR = "Revenus";
+      typeID = 1;
+    } else {
+        this.entryTypeFR = "Dépenses";
+      }
+    const entryTypes = this.bugetEntryTypes;
+    this.bugetEntryTypes = entryTypes.filter(
+        entry => entry.typeId == typeID);
   }
 
   addEntry() {
     const amount: number = document.getElementById('amount')['value'];
     // console.log("Amount: ", amount);
-    const annual = this.bugetService.convertToAnnualIncomes(+amount, +this.currentEntryFrequencyId)
-    this.openEntryForm = false;
-    this.newEntry = {type: this.bugetService.getEntryTypeDescription(this.currentEntryTypeId, this.bugetEntryTypes), amount: amount, frequency: this.bugetService.getFrequencyDescription(this.currentEntryFrequencyId), annual: annual};
-    // console.log("Add entry: ", this.newEntry);
-    switch (this.entryType) {
-      case("incomes"): {
-        this.incomesList.push(this.newEntry);
-        break;
+    const annual = this.bugetService.convertToAnnualIncomes(+amount, +this.currentEntryFrequencyId);
+    const type = this.bugetService.getEntryTypeDescription(this.currentEntryTypeId, this.bugetEntryTypes);
+    const frequency = this.bugetService.getFrequencyDescription(this.currentEntryFrequencyId);
+    if (type != null || frequency != null) {
+      this.openEntryForm = false;
+      this.newEntry = {type: type, 
+          amount: amount, frequency: frequency, annual: annual};
+  
+      switch (this.entryType) {
+        case("incomes"): {
+          this.incomesList.push(this.newEntry);
+          break;
+        }
+        case("expenses"): {
+          this.expensesList.push(this.newEntry);
+          break;
+        }
       }
-      case("expenses"): {
-        this.expensesList.push(this.newEntry);
-        break;
-      }
-    }
-    this.loadGridsData();
+      this.errorField = "";
+      this.bugetEntryTypes = [];
+      this.getBudgetEntryTypes()
+      this.loadGridsData();
+    }  else {
+        this.errorField = "Valeur invalide pour 'Type' ou 'Fréquence'.";
+      }  
   }
 
   openControlTable(tableName: string) {
@@ -152,6 +181,7 @@ export class BudgetFormComponent implements OnInit {
   }
 
   onChangeFrequency() {
+    this.errorField = "";
     const value: number = document.getElementById('frequency')['value'];
     console.log("Element: ", value);
     if (value != null) {
@@ -160,6 +190,7 @@ export class BudgetFormComponent implements OnInit {
   }
 
   onChangeType() {
+    this.errorField = "";
     const value: number = document.getElementById('type')['value'];
     console.log("Element: ", value);
     if (value != null) {
