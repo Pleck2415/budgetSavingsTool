@@ -12,6 +12,19 @@
                 <button type="button" class="btn btn-primary" (click)="createNewBudget()">Créer un nouveau budget</button>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-12">
+                <ag-grid-angular #budgetsGrid
+                    class="ag-theme-balham" 
+                    [rowData]="rowData" 
+                    [columnDefs]="columnDefs"
+                    [pagination]="true"
+                    [paginationPageSize]="25"                  
+                    (cellValueChanged)="cellValueChanged($event)"
+                    (gridReady)="onBudgetGridReady($event)">
+                </ag-grid-angular>
+            </div>
+        </div>
     </div>
 </div>
 

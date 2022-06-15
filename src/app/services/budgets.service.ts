@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Budget } from '../models/budget.model';
-
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/database';
 @Injectable({
   providedIn: 'root'
 })
@@ -48,7 +50,6 @@ export class BudgetsService {
     });
     return description;
   }
-
   
   convertToAnnualIncomes(amount: number, frequencyID: number) {
     console.log("In convert amount: ", amount, " frequency: ", frequencyID );
@@ -90,9 +91,46 @@ export class BudgetsService {
     return total;
   }
 
-  saveBudget(budget: Budget) {
-    // this.nextCampaignID = campaign.cmID + 1;
-    // firebase.database().ref("campaigns/" + campaign.cmID + "/" ).set(campaign);
-  }  
+  getBudgetsList() {
+    const userID = firebase.auth().currentUser.uid;
+    var elementList: any[] = [];
+    firebase.database().ref("/budgets/" + userID  ).orderByValue().on("value", function(data) {   
+      data.forEach(function(data) {
+        var createdBy = data.val().createdBy;
+        var dateFrom = data.val().dateFrom;
+        var dateTo = data.val().dateTo;
+        var description = data.val().description;
+        var id = data.val().id;
+        var title = data.val().title;
+        var incomes = data.val().incomes;
+        var expenses = data.val().expenses;
+        elementList.push({id: id, description: description, createdBy: createdBy, dateFrom: dateFrom, dateTo: dateTo, title: title, incomes: incomes, expenses: expenses });
+      });
+    });
+    return elementList;
+  }
+
+  saveBudget(budget: any) {
+    const myId = budget.id;
+    const userID = firebase.auth().currentUser.uid;
+    firebase.database().ref("budgets/" + userID + "/" + myId).set(budget);
+  }
+  
+  getElementNextID() { 
+    const tableName: string = "budgets"    
+    var nextID = 0;    
+    const userID = firebase.auth().currentUser.uid;
+    firebase.database().ref(tableName + "/" + userID + "/").limitToLast(1)
+    .on('child_added', function(data) {
+        const myID = data.val().id;
+        console.log('Query in service: ', myID);
+    if( myID == null) {
+        nextID = 0;
+    } else {
+        nextID = myID +1;
+        }
+    });
+    return nextID;
+  }
 
 }

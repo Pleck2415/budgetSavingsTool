@@ -1,10 +1,12 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Entry } from 'src/app/models/entry.model';
 import { BudgetsService } from 'src/app/services/budgets.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Router } from '@angular/router';
 import { ControlTableService } from 'src/app/services/control-table.service';
+import { map, Observable } from 'rxjs';
+import { Budget } from 'src/app/models/budget.model';
 
 @Component({
   selector: 'app-budget-form',
@@ -15,6 +17,8 @@ export class BudgetFormComponent implements OnInit {
 
   budgetForm: FormGroup;
   entryForm: FormGroup;
+  budgetSave$: Observable<Budget>;
+  budgetSave: Budget;
 
   // modalRef: BsModalRef;
   openEntryForm: boolean = false;
@@ -37,7 +41,7 @@ export class BudgetFormComponent implements OnInit {
   incomesList: Entry[] = [];
   expensesList: Entry[] = [];
 
-  constructor(private formBuilder: FormBuilder, private bugetService: BudgetsService, private modalService: BsModalService, private router: Router, private cTService: ControlTableService) { }
+  constructor(private formBuilder: FormBuilder, private budgetService: BudgetsService, private modalService: BsModalService, private router: Router, private cTService: ControlTableService) { }
   
   incomesRowData: any;
   incomesColumnDefs = [
@@ -58,20 +62,22 @@ export class BudgetFormComponent implements OnInit {
   ngOnInit(): void {
     this.initForm();
     // this.onInitEntryForm();
-    this.budgetEntryFrequecies = this.bugetService.frequencyList;
+    this.budgetEntryFrequecies = this.budgetService.frequencyList;
     this.getBudgetEntryTypes();
     this.getAnnulalTotal();
     this.loadGridsData();
   }
 
   initForm() {
+    const nextId = this.budgetService.getElementNextID();
     this.budgetForm = this.formBuilder.group({
-      title: [null],
-      createdBy: [null],
+      id: nextId,
+      title: [null, Validators.required],
+      createdBy: [null, Validators.required],
       description: [null],
       dateFrom: [null],
       dateTo: [null],
-      incomes: [null],
+      incomes: this.incomesList,
       expenses: [null]
     });
   }
@@ -81,8 +87,8 @@ export class BudgetFormComponent implements OnInit {
   }
 
   getAnnulalTotal() {
-    this.incomesTotal = this.bugetService.getAnnualTotal(this.incomesList);
-    this.expensesTotal = this.bugetService.getAnnualTotal(this.expensesList);
+    this.incomesTotal = this.budgetService.getAnnualTotal(this.incomesList);
+    this.expensesTotal = this.budgetService.getAnnualTotal(this.expensesList);
   }
 
   loadGridsData() {
@@ -113,10 +119,10 @@ export class BudgetFormComponent implements OnInit {
     console.log("Value change: ",event);
     const rowIndex = +event.rowIndex;
     const amount = +event.newValue;
-    const freq = this.bugetService.getFrequencyId(event.data.frequency);
-    this.incomesRowData[rowIndex].annual = this.bugetService.convertToAnnualIncomes(amount, freq);
+    const freq = this.budgetService.getFrequencyId(event.data.frequency);
+    this.incomesRowData[rowIndex].annual = this.budgetService.convertToAnnualIncomes(amount, freq);
     this.incomesGridApi.setRowData(this.incomesRowData);
-    this.incomesTotal = this.bugetService.getAnnualTotal(this.incomesRowData);
+    this.incomesTotal = this.budgetService.getAnnualTotal(this.incomesRowData);
   }
 
   onExpensesGridReady(params) {
@@ -149,9 +155,9 @@ export class BudgetFormComponent implements OnInit {
   addEntry() {
     const amount: number = document.getElementById('amount')['value'];
     // console.log("Amount: ", amount);
-    const annual = this.bugetService.convertToAnnualIncomes(+amount, +this.currentEntryFrequencyId);
-    const type = this.bugetService.getEntryTypeDescription(this.currentEntryTypeId, this.bugetEntryTypes);
-    const frequency = this.bugetService.getFrequencyDescription(this.currentEntryFrequencyId);
+    const annual = this.budgetService.convertToAnnualIncomes(+amount, +this.currentEntryFrequencyId);
+    const type = this.budgetService.getEntryTypeDescription(this.currentEntryTypeId, this.bugetEntryTypes);
+    const frequency = this.budgetService.getFrequencyDescription(this.currentEntryFrequencyId);
     if (type != null || frequency != null) {
       this.openEntryForm = false;
       this.newEntry = {type: type, 
@@ -174,6 +180,21 @@ export class BudgetFormComponent implements OnInit {
     }  else {
         this.errorField = "Valeur invalide pour 'Type' ou 'Fréquence'.";
       }  
+  }
+
+  onSubmitBudget() {
+    this.budgetForm.patchValue({incomes: this.incomesList});
+    this.budgetForm.patchValue({expenses: this.expensesList});
+    this.budgetSave = this.budgetForm.value;
+    // this.budgetSave$ = this.budgetForm.valueChanges.pipe(
+    //   map(formValue => ({
+    //     ...formValue,
+    //   })
+    //   )
+    // );
+    this.budgetService.saveBudget(this.budgetSave);
+    alert("Budget saved!");
+    console.log("Budget saved!");
   }
 
   openControlTable(tableName: string) {

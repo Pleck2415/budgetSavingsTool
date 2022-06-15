@@ -9,6 +9,15 @@
         <h1 style="text-align: center;">Budget et Économies</h1>
         <form [formGroup]="budgetForm">
             <div class="row">
+                <div class="col-md-12">
+                    <div class="head-toolbar">
+                        <div>
+                            <button type="button" class="btn - btn-toolBar" (click)="onSubmitBudget()"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+                        </div>
+                    </div><br>
+                </div>
+            </div>
+            <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="title">Titre</label>
@@ -123,7 +132,7 @@
                 </div>
                 <div class="col-md-8">
                     <div class="row">
-                        <h3 style="color: rgb(42, 131, 42);">Revenus</h3>
+                        <h2 style="color: rgb(42, 131, 42);">Revenus</h2>
                         <table>
                             <tr>
                                 <ag-grid-angular #incomesGrid
@@ -137,16 +146,16 @@
                                 </ag-grid-angular>
                             </tr>
                         </table>
-                        <table>
+                        <table style="width: 98%">
                             <tr>
                                 <td class="incomes-total-left"></td>
-                                <td class="incomes-total-left" style="width: 75px;">Total :</td>
+                                <td class="incomes-total-left" style="width: 75px; font-weight: lighter;">Total :</td>
                                 <td class="incomes-total" style="width: 150px; text-align: right;padding-right: 10px;">{{incomesTotal}}</td>
                             </tr>
                         </table>
                     </div>
                     <div class="row">
-                        <h3 style="color: rgb(200, 32, 20);">Dépenses</h3>
+                        <h2 style="color: rgb(200, 32, 20);">Dépenses</h2>
                         <table>
                             <tr>
                                 <ag-grid-angular #expensesGrid
@@ -160,10 +169,10 @@
                                 </ag-grid-angular>
                             </tr>
                         </table>
-                        <table>
+                        <table style="width: 98%">
                             <tr>
                                 <td class="incomes-total-left"></td>
-                                <td class="incomes-total-left" style="width: 75px;">Total :</td>
+                                <td class="incomes-total-left" style="width: 75px; font-weight: lighter;">Total :</td>
                                 <td class="expenses-total" style="width: 150px; text-align: right;padding-right: 10px;">{{expensesTotal}}</td>
                             </tr>
                         </table>
