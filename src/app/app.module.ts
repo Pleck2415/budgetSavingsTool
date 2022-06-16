@@ -30,7 +30,7 @@ const appRoutes: Routes = [
   { path: 'auth/signin', component: SigninComponent },
   { path: 'home',component: BudgetHomeComponent },
   { path: 'budgets', canActivate: [AuthGuardService], component: BudgetListComponent },
-  { path: 'budgets/new', canActivate: [AuthGuardService], component: BudgetFormComponent },
+  { path: 'budget/new', canActivate: [AuthGuardService], component: BudgetFormComponent },
   { path: 'budgets/view/:id', canActivate: [AuthGuardService], component: SingleBudgetComponent },
   { path: 'budget-entry-types', canActivate: [AuthGuardService], component: BudgetEntryTypesComponent },
   { path: '', redirectTo: 'budgets', pathMatch: 'full' },

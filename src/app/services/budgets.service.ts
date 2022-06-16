@@ -3,6 +3,7 @@ import { Budget } from '../models/budget.model';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/database';
+import { Router } from '@angular/router';
 @Injectable({
   providedIn: 'root'
 })
@@ -17,8 +18,15 @@ export class BudgetsService {
     {id: 5, description: "Annuel"}
   ];
 
-  constructor() { }
+  currentBudget: Budget;
 
+  constructor(private router: Router) { }
+
+  openCurrentBudget(budget: Budget) {
+    this.currentBudget = budget;
+    this.router.navigateByUrl('budget/new');
+  }
+  
   getFrequencyDescription(id: number) {
     var frequencyObject: any;
     this.frequencyList.forEach(element => {
@@ -94,6 +102,8 @@ export class BudgetsService {
   getBudgetsList() {
     const userID = firebase.auth().currentUser.uid;
     var elementList: any[] = [];
+    var incomes = new Array();
+    var expenses = new Array();
     firebase.database().ref("/budgets/" + userID  ).orderByValue().on("value", function(data) {   
       data.forEach(function(data) {
         var createdBy = data.val().createdBy;
@@ -102,8 +112,16 @@ export class BudgetsService {
         var description = data.val().description;
         var id = data.val().id;
         var title = data.val().title;
-        var incomes = data.val().incomes;
-        var expenses = data.val().expenses;
+        if(data.val().incomes != undefined) {
+          incomes = data.val().incomes;
+        } else {
+            incomes = null;
+          }
+        if(data.val().expenses != undefined) {
+          var expenses = data.val().expenses;
+        } else {
+            expenses = null;
+          }       
         elementList.push({id: id, description: description, createdBy: createdBy, dateFrom: dateFrom, dateTo: dateTo, title: title, incomes: incomes, expenses: expenses });
       });
     });

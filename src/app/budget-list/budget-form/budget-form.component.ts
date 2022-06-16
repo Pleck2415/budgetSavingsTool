@@ -19,6 +19,7 @@ export class BudgetFormComponent implements OnInit {
   entryForm: FormGroup;
   budgetSave$: Observable<Budget>;
   budgetSave: Budget;
+  currentBudget: Budget;
 
   // modalRef: BsModalRef;
   openEntryForm: boolean = false;
@@ -70,6 +71,8 @@ export class BudgetFormComponent implements OnInit {
 
   initForm() {
     const nextId = this.budgetService.getElementNextID();
+    this.currentBudget = this.budgetService.currentBudget;
+
     this.budgetForm = this.formBuilder.group({
       id: nextId,
       title: [null, Validators.required],
@@ -78,8 +81,14 @@ export class BudgetFormComponent implements OnInit {
       dateFrom: [null],
       dateTo: [null],
       incomes: this.incomesList,
-      expenses: [null]
+      expenses: this.expensesList
     });
+    if(this.currentBudget != undefined) {
+      this.budgetForm.setValue(this.currentBudget);
+      this.incomesList = this.currentBudget.incomes;
+      this.expensesList = this.currentBudget.expenses;
+      this.loadGridsData();
+    }
   }
 
   getBudgetEntryTypes() {
@@ -98,14 +107,18 @@ export class BudgetFormComponent implements OnInit {
     var expensesArray = new Array();
     incomesArray = [];
     expensesArray = [];
-    this.incomesList.forEach(element => {
-      incomesArray.push(element);
-    });
-    this.incomesRowData = incomesArray;
-    this.expensesList.forEach(element => {
-      expensesArray.push(element);
-    });
-    this.expensesRowData = expensesArray;
+    if(this.incomesList.length > 0) {
+      this.incomesList.forEach(element => {
+        incomesArray.push(element);
+      });
+      this.incomesRowData = incomesArray;
+    }
+    if(this.expensesList.length > 0) {
+      this.expensesList.forEach(element => {
+        expensesArray.push(element);
+      });
+      this.expensesRowData = expensesArray;
+    }
     this.getAnnulalTotal();
   }
 

@@ -7,21 +7,29 @@
     <div class="col-sm-8 col-sm-offset-2">
         <h1>Budget et Économies</h1>
         <div class="row">
-            <h3>Liste des budgets</h3>
-            <div class="form-group">
-                <button type="button" class="btn btn-primary" (click)="createNewBudget()">Créer un nouveau budget</button>
+            <div class="col-md-12">
+                <h3>Liste des budgets</h3>
+                <div class="form-group">
+                    <button type="button" class="btn btn-dark btn-add" (click)="createNewBudget()">Nouveau budget</button>
+                </div>
             </div>
         </div>
         <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <button type="button" class="btn btn-dark btn-add" (click)="loadBudgets()">Charger mes budgets</button>
+                </div>
+            </div>
             <div class="col-md-12">
                 <ag-grid-angular #budgetsGrid
                     class="ag-theme-balham" 
                     [rowData]="rowData" 
                     [columnDefs]="columnDefs"
                     [pagination]="true"
-                    [paginationPageSize]="25"                  
-                    (cellValueChanged)="cellValueChanged($event)"
-                    (gridReady)="onBudgetGridReady($event)">
+                    [paginationPageSize]="25"
+                    rowSelection="single"                
+                    (selectionChanged)="selectionChanged()"
+                    (gridReady)="onBudgetsGridReady($event)">
                 </ag-grid-angular>
             </div>
         </div>
