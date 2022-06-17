@@ -19,11 +19,18 @@ export class BudgetsService {
   ];
 
   currentBudget: Budget;
+  isNewBudget: boolean = false;
 
   constructor(private router: Router) { }
 
   openCurrentBudget(budget: Budget) {
     this.currentBudget = budget;
+    this.isNewBudget = false;
+    this.router.navigateByUrl('budget/new');
+  }
+
+  addNewBudget() {
+    this.isNewBudget = true;
     this.router.navigateByUrl('budget/new');
   }
   
@@ -132,6 +139,7 @@ export class BudgetsService {
     const myId = budget.id;
     const userID = firebase.auth().currentUser.uid;
     firebase.database().ref("budgets/" + userID + "/" + myId).set(budget);
+    this.isNewBudget = false;
   }
   
   getElementNextID() { 

@@ -17,11 +17,11 @@ export class BudgetListComponent implements OnInit {
   rowData: any[] = [];
   columnDefs = [
     {headerName: 'ID', field: 'id', width: 50 },
-    {headerName: 'Titre', field: 'title', width: 150, resizable: true, sortable: true, filter: true },
-    {headerName: 'Date début', field: 'dateFrom', width: 100, resizable: true, sortable: true, filter: true },
-    {headerName: 'Date fin', field: 'dateTo', width: 100, resizable: true, sortable: true, filter: true },
-    {headerName: 'Créé par', field: 'createdBy', width: 150, resizable: true, sortable: true, filter: true },
-    {headerName: 'Description', field: 'description', width: 300, resizable: true },
+    {headerName: 'Titre', field: 'title', width: 250, resizable: true, sortable: true, filter: true },
+    {headerName: 'Date début', field: 'dateFrom', width: 120, resizable: true, sortable: true, filter: true },
+    {headerName: 'Date fin', field: 'dateTo', width: 120, resizable: true, sortable: true, filter: true },
+    {headerName: 'Créé par', field: 'createdBy', width: 175, resizable: true, sortable: true, filter: true },
+    {headerName: 'Description', field: 'description', width: 420, resizable: true },
   ];
 
   constructor(private router: Router, private budgetService: BudgetsService) {
@@ -34,7 +34,7 @@ export class BudgetListComponent implements OnInit {
   }
 
   createNewBudget() {
-    this.router.navigateByUrl('budget/new');
+    this.budgetService.addNewBudget();
   }
 
   getBudgetsList() {

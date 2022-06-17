@@ -17,9 +17,9 @@ export class BudgetFormComponent implements OnInit {
 
   budgetForm: FormGroup;
   entryForm: FormGroup;
-  budgetSave$: Observable<Budget>;
   budgetSave: Budget;
   currentBudget: Budget;
+  isNewBudget: boolean = true;
 
   // modalRef: BsModalRef;
   openEntryForm: boolean = false;
@@ -61,18 +61,15 @@ export class BudgetFormComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    this.isNewBudget = this.budgetService.isNewBudget;
     this.initForm();
-    // this.onInitEntryForm();
     this.budgetEntryFrequecies = this.budgetService.frequencyList;
     this.getBudgetEntryTypes();
     this.getAnnulalTotal();
-    this.loadGridsData();
   }
 
   initForm() {
     const nextId = this.budgetService.getElementNextID();
-    this.currentBudget = this.budgetService.currentBudget;
-
     this.budgetForm = this.formBuilder.group({
       id: nextId,
       title: [null, Validators.required],
@@ -80,14 +77,25 @@ export class BudgetFormComponent implements OnInit {
       description: [null],
       dateFrom: [null],
       dateTo: [null],
-      incomes: this.incomesList,
-      expenses: this.expensesList
+      incomes: [null],
+      expenses: [null]
     });
-    if(this.currentBudget != undefined) {
+    if(!this.isNewBudget) {
+      this.currentBudget = this.budgetService.currentBudget;
       this.budgetForm.setValue(this.currentBudget);
-      this.incomesList = this.currentBudget.incomes;
-      this.expensesList = this.currentBudget.expenses;
-      this.loadGridsData();
+      if  (Array.isArray(this.currentBudget.incomes) && this.currentBudget.incomes.length ) {
+        this.incomesList = this.currentBudget.incomes;
+        this.loadIncomesGridsData();
+      } else {
+          this.incomesList =  [];
+        }
+      
+      if  (Array.isArray(this.currentBudget.expenses) && this.currentBudget.expenses.length ) {
+        this.expensesList = this.currentBudget.expenses;
+        this.loadExpensesGridsData();
+      } else {
+          this.expensesList = [];
+        }
     }
   }
 
@@ -100,25 +108,25 @@ export class BudgetFormComponent implements OnInit {
     this.expensesTotal = this.budgetService.getAnnualTotal(this.expensesList);
   }
 
-  loadGridsData() {
-    this.incomesRowData = this.incomesList;
+  loadExpensesGridsData() {
     this.expensesRowData = this.expensesList;
-    var incomesArray = new Array();
     var expensesArray = new Array();
-    incomesArray = [];
     expensesArray = [];
-    if(this.incomesList.length > 0) {
-      this.incomesList.forEach(element => {
-        incomesArray.push(element);
-      });
-      this.incomesRowData = incomesArray;
-    }
-    if(this.expensesList.length > 0) {
-      this.expensesList.forEach(element => {
-        expensesArray.push(element);
-      });
+    this.expensesList.forEach(element => {
+      expensesArray.push(element);
       this.expensesRowData = expensesArray;
-    }
+    });
+    this.getAnnulalTotal();
+  }
+
+  loadIncomesGridsData() {
+    this.incomesRowData = this.incomesList;
+    var incomesArray = new Array();
+    incomesArray = [];   
+    this.incomesList.forEach(element => {
+      incomesArray.push(element);
+      this.incomesRowData = incomesArray;
+    });
     this.getAnnulalTotal();
   }
 
@@ -179,17 +187,19 @@ export class BudgetFormComponent implements OnInit {
       switch (this.entryType) {
         case("incomes"): {
           this.incomesList.push(this.newEntry);
+          this.loadIncomesGridsData();
           break;
         }
         case("expenses"): {
           this.expensesList.push(this.newEntry);
+          this.loadExpensesGridsData();
           break;
         }
       }
       this.errorField = "";
       this.bugetEntryTypes = [];
       this.getBudgetEntryTypes()
-      this.loadGridsData();
+
     }  else {
         this.errorField = "Valeur invalide pour 'Type' ou 'Fréquence'.";
       }  
@@ -230,5 +240,9 @@ export class BudgetFormComponent implements OnInit {
     if (value != null) {
       this.currentEntryTypeId = value;
     }
+  }
+
+  openCalculationForm() {
+    this.router.navigate(['/budget/calculation']);
   }
 }

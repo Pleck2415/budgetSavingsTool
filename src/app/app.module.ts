@@ -23,6 +23,7 @@ import { AuthService } from './services/auth.service';
 import { AuthGuardService } from './services/auth-guard.service';
 import { BudgetsService } from './services/budgets.service';
 import { BudgetEntryTypesComponent } from './budget-list/budget-entry-types/budget-entry-types.component';
+import { BudgetCalculationComponent } from './budget-list/budget-calculation/budget-calculation.component';
 
 
 const appRoutes: Routes = [
@@ -31,7 +32,7 @@ const appRoutes: Routes = [
   { path: 'home',component: BudgetHomeComponent },
   { path: 'budgets', canActivate: [AuthGuardService], component: BudgetListComponent },
   { path: 'budget/new', canActivate: [AuthGuardService], component: BudgetFormComponent },
-  { path: 'budgets/view/:id', canActivate: [AuthGuardService], component: SingleBudgetComponent },
+  { path: 'budget/calculation', canActivate: [AuthGuardService], component: BudgetCalculationComponent },
   { path: 'budget-entry-types', canActivate: [AuthGuardService], component: BudgetEntryTypesComponent },
   { path: '', redirectTo: 'budgets', pathMatch: 'full' },
   { path: '**', redirectTo: 'budgets' }
@@ -47,6 +48,7 @@ const appRoutes: Routes = [
     BudgetFormComponent,
     BudgetHomeComponent,
     BudgetEntryTypesComponent,
+    BudgetCalculationComponent,
   ],
   imports: [
     BrowserModule,

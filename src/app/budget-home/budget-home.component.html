@@ -4,24 +4,45 @@
     </ol>
 </nav>
 <div class="row">
-    <div class="col-sm-8 col-sm-offset-2">
+    <div class="col-md-12">
         <h1>Budget et Économies</h1>
-    </div>
-    <body>
-        <h3>Bienvevue</h3>
-        <div *ngIf="!signin && !signup">
-            <app-signin></app-signin>
-        </div> 
-        <div *ngIf="signin">
-            <app-signin></app-signin>
-        </div> 
-        <div *ngIf="signup">
-            <app-signup></app-signup>
-        </div>
-        <div *ngIf="signin || !signup">
-            <div class="form-group">
-                <br><span>Pas inscrit?</span>&nbsp;&nbsp;<button type="button" class="btn btn-dark" (click)="goToSignup()">Créer un compte</button>
+
+        <body>
+            <div class="row">
+                <div class="col-md-12">
+                    <h3>Bienvevue</h3>
+                </div>
             </div>
-        </div>         
-    </body>
+            <div *ngIf="!signin && !signup">
+                <div class="row">
+                    <div class="col-md-12">
+                        <app-signin></app-signin>
+                    </div>
+                </div>
+            </div> 
+            <div *ngIf="signin">
+                <div class="row">
+                    <div class="col-md-12">
+                        <app-signin></app-signin>
+                    </div>
+                </div>
+            </div> 
+            <div *ngIf="signup">
+                <div class="row">
+                    <div class="col-md-12">
+                        <app-signup></app-signup>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="signin || !signup">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <br><span>Pas inscrit?</span>&nbsp;&nbsp;<button type="button" class="btn btn-dark" (click)="goToSignup()">Créer un compte</button>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+        </body>
+    </div>
 </div>
