@@ -8,13 +8,13 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="title">Titre</label>
-                                <input type="text" id="title" class="form-control" formControlName="title" [disabled]="true">
+                                <input type="text" id="title" class="form-control" formControlName="title">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="createdBy">Créé par</label>
-                                <input type="text" id="createdBy" class="form-control" formControlName="createdBy" [disabled]="true">
+                                <input type="text" id="createdBy" class="form-control" formControlName="createdBy">
                             </div>                            
                         </div>
                     </div>
@@ -22,13 +22,13 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="dateFrom">Date début</label>
-                                <input type="Date" id="dateFrom" class="form-control" formControlName="dateFrom" [disabled]="true">
+                                <input type="Date" id="dateFrom" class="form-control" formControlName="dateFrom">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="dateTo">Date fin</label>
-                                <input type="date" id="dateTo" class="form-control" formControlName="dateTo" [disabled]="true">
+                                <input type="date" id="dateTo" class="form-control" formControlName="dateTo">
                             </div>
                         </div>                     
                     </div>
@@ -36,28 +36,55 @@
             </div>
             <hr class="line-1">   
             <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="numberOfPayer">Nombre de payeur</label>
-                        <input type="number" id="numberOfPayer" min="1" class="form-control" (change)="getPayerParts()" formControlName="numberOfPayer">
-                    </div>
+                <div class="col-md-2">
+                    <label for="numberOfPayers">Nombre de payeur</label>
+                    <input type="number" id="numberOfPayers" min="1" class="form-control" (change)="getPayerParts($event)">
                 </div>
+                <div class="row" *ngIf="hasParts">
+                    <div *ngFor="let part of payerParts; let indexOfelement=index;">
+                        <div class="col-md-4">
+                            <label for="payerName">Nom du {{part.payer}}</label>
+                            <input type="text" id="Name-{{part.id}}" class="form-control">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="payerPart">Part du {{part.payer}}</label>
+                            <input type="number" min="0" max="100" id="Part-{{part.id}}" class="form-control">
+                        </div>                                                            
+                    </div>
+                </div>                
             </div>
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-4">
+                    <label for="frequency">Fréquence des paiements </label>
+                    <select id="frequency" class="form-control" (change)="onChangeFrequency()">
+                        <option value="" selected="selected">--Sélectionnez--</option>
+                        <option *ngFor="let frequency of budgetEntryFrequecies; let indexOfelement=index;" value="{{frequency.id}}">{{frequency.description}}</option>
+                    </select>
+                </div>
+                <div class="row">
                     <div class="row">
-                        <div class="form-group">
-                            <label for="numberOfPayer">Parties (%)</label>
-                            <input type="number" id="numberOfPayer" min="0" class="form-control" formControlName="numberOfPayer">
+                        <div class="col-md-12">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <button class="btn btn-dark btn-add" (click)="generateBudget()"><i class="bi bi-calculator-fill"></i>&nbsp;Calculer</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                </div>
+                <div class="row">
                     <div class="row">
-                        <div *ngFor="let part of payerParts">
-                            <div class="col-md-6"> 
-                                <div class="form-group">
-                                    <input type="number" id="numberOfPayer" class="form-control" formControlName="numberOfPayer">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <span>Total des dépenses anuellement : {{totalAnnualExpenses}}</span><br>
+                                <hr class="line-1">
+                                <div *ngFor="let item of payersTotal">
+                                    <span>Nom : {{item.name}}</span><br>
+                                    <span>Part : {{item.part}} %</span><br>
+                                    <span>Montant : {{item.amount}} $ - {{currentFrequency}}</span>
+                                    <hr class="line-1">
                                 </div>
-                            </div>   
+                            </div>
                         </div>
                     </div>
                 </div>

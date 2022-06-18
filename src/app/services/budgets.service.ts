@@ -97,6 +97,37 @@ export class BudgetsService {
     };
     return annualAmount;
   }
+  
+  convertToAnnualExpenses(amount: number, frequencyID: number) {
+    var annualAmount: number = 0;
+    switch (frequencyID) {
+      case(0):{
+        annualAmount = amount / 365;
+        break;
+      }
+      case(1):{
+        annualAmount = amount / 52.14;
+        break;
+      }
+      case(2):{
+        annualAmount = amount / 26.07;
+        break;
+      }
+      case(3):{
+        annualAmount = amount / 24;
+        break;
+      }
+      case(4):{
+        annualAmount = amount / 12;
+        break;
+      }
+      case(5):{
+        annualAmount = amount;
+        break;
+      }
+    };
+    return annualAmount;
+  }
 
   getAnnualTotal(incomesList: any[]) {
     var total: number = 0;
