@@ -8,6 +8,7 @@ export class Budget {
   public dateTo: string,
   public createdBy: string,
   public description: string,
+  public resources: any[],
   public incomes: Entry[],
   public expenses: Entry[]
   ) {}

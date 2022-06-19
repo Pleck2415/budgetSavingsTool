@@ -15,15 +15,19 @@ export class ControlTableService {
     firebase.database().ref(tableName + "/" + elementId).set(element);
   }
 
-  getTableElements(tableName: string) {
+  getTableElements(tableName: string, withType: boolean) {
     var elementList: any[] = [];
     firebase.database().ref(tableName + "/").orderByValue().on("value", function(data) {   
       data.forEach(function(data) {
-        var elementId = data.val().entryId;
+        var elementId = data.val().id;
         var description = data.val().description;
-        var typeId = data.val().typeId;
         var active = data.val().active;
-        elementList.push({entryId: elementId, description: description, typeId: typeId, active: active});
+        if (withType) {
+          var typeId = data.val().typeId;
+          elementList.push({id: elementId, description: description, typeId: typeId, active: active});
+        } else {
+            elementList.push({id: elementId, description: description, active: active});
+          }
       });
     });
     return elementList;
@@ -54,7 +58,7 @@ export class ControlTableService {
     const userID = firebase.auth().currentUser.uid;
     firebase.database().ref(tableName + "/").limitToLast(1)
     .on('child_added', function(data) {
-        const myID = data.val().entryId;
+        const myID = data.val().id;
         console.log('Query in service: ', myID);
     if( myID == null) {
         nextID = 0;
@@ -78,10 +82,10 @@ export class ControlTableService {
    return isUnique;
   }
 
-  deleteEntry(tableName: string, entryId: string) {
-    firebase.database().ref(tableName + "/" + entryId).remove();
-    // var mPostReference = firebase.database().ref(tableName + "/").child("entryId").child(entryId);
-    console.log('Entry [ ' + entryId + ' ] deleted!');
+  deleteEntry(tableName: string, id: string) {
+    firebase.database().ref(tableName + "/" + id).remove();
+    // var mPostReference = firebase.database().ref(tableName + "/").child("id").child(id);
+    console.log('Entry [ ' + id + ' ] deleted!');
     // mPostReference.remove();
   }
 }

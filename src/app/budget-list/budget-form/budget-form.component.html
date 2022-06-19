@@ -19,52 +19,174 @@
             </div>
             <div class="row">
                 <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="title">Titre</label>
-                        <input type="text" id="title" class="form-control" formControlName="title">
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="dateFrom">Date début</label>
-                                <input type="Date" id="dateFrom" class="form-control" formControlName="dateFrom">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="dateTo">Date fin</label>
-                                <input type="date" id="dateTo" class="form-control" formControlName="dateTo">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="createdBy">Créé par</label>
-                                <input type="text" id="createdBy" class="form-control" formControlName="createdBy">
-                            </div>                            
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="description">Description</label>
-                                <textarea id="description" class="form-control" formControlName="description"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <hr class="line-1">
-                    <div class="row">
-                        <div class="form-group">
-                            <div class="col-md-12" style="text-align:center;">
-                                <span>Tables de pilotage</span> 
-                            </div> 
-                        </div>
-                        <div class="col-md-12"> 
-                            <button class="control-table" (click)="openControlTable('budget-entry-types')">- Types d'entrées au budget</button>
-                        </div>
-                    </div>
-                    <hr class="line-1">
+                    <mdb-accordion [flush]="true" [multiple]="true">
+                        <mdb-accordion-item [collapsed]="false">
+                            <ng-template mdbAccordionItemHeader>Information du budget</ng-template>
+                            <ng-template mdbAccordionItemBody>
+                                <div class="form-group">
+                                    <label for="title">Titre</label>
+                                    <input type="text" id="title" class="form-control" formControlName="title">
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="dateFrom">Date début</label>
+                                            <input type="Date" id="dateFrom" class="form-control" formControlName="dateFrom">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="dateTo">Date fin</label>
+                                            <input type="date" id="dateTo" class="form-control" formControlName="dateTo">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="createdBy">Créé par</label>
+                                            <input type="text" id="createdBy" class="form-control" formControlName="createdBy">
+                                        </div>                            
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="description">Description</label>
+                                            <textarea id="description" class="form-control" formControlName="description"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2"> 
+                                        <button class="btn btn-dark btn-resource" (click)="addBudgetResource()" [disabled]="!addResource"><i class="bi bi-person-plus-fill"></i></button>
+                                    </div>
+                                    <div class="col-md-2"> 
+                                        <button class="btn btn-dark btn-resource" (click)="confirmBudgetResource()" [disabled]="!resourceSelected"><i class="bi bi-person-check-fill"></i></button>
+                                    </div>
+                                </div>
+                                <div class="row" *ngIf="selectResource">
+                                    <div class="col-md-6">    
+                                        <div class="form-group">                        
+                                            <br>
+                                            <select id="resource" class="form-control" (change)="onChangeResource()">
+                                                <option value="" selected="selected">--Sélectionnez--</option>
+                                                <option *ngFor="let resource of budgetResources; let indexOfelement=index;" value="{{resource.id}}">{{resource.description}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" *ngIf="hasResources">
+                                    <div class="col-md-12">
+                                        <table>
+                                            <tr><br><span>Ressources</span></tr>
+                                            <tr *ngFor="let resource of currentBudgetResources">
+                                                <br><div>
+                                                    <button class="btn btn-dark btn-add" style="width: 250px" (click)="onRemoveResource(resource)">{{resource.description}}&nbsp;&nbsp;<i class="bi bi-trash-fill"></i></button>
+                                                </div> 
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>                        
+                            </ng-template>
+                        </mdb-accordion-item>
+                        <mdb-accordion-item>
+                            <ng-template mdbAccordionItemHeader>Tables de pilotage</ng-template>
+                            <ng-template mdbAccordionItemBody>
+                                <div class="row">
+                                    <div class="col-md-12"> 
+                                        <button class="control-table" (click)="openControlTable('budget-entry-types')">- Types d'entrées au budget</button>
+                                    </div>
+                                    <div class="col-md-12"> 
+                                        <button class="control-table" (click)="openControlTable('budget-resources')">- Ressources de budget</button>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </mdb-accordion-item>
+                        <mdb-accordion-item>
+                            <ng-template mdbAccordionItemHeader>Nouvelles entrées au budget</ng-template>
+                            <ng-template mdbAccordionItemBody>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-12" style="text-align:center;">
+                                            <h3>{{entryTypeFR}} - Nouvelle entrée</h3> 
+                                        </div> 
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-4">
+                                                <label for="type">Type : </label>
+                                            </div>
+                                            <div class="col-md-8">                            
+                                                <select id="type" class="form-control" (change)="onChangeType()">
+                                                    <option value="" selected="selected">--Sélectionnez--</option>
+                                                    <option *ngFor="let type of bugetEntryTypes; let indexOfelement=index;" value="{{type.id}}">{{type.description}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-4">
+                                                <label for="detail">Détail : </label>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <input type="text" id="detail" class="form-control" placeholder="* Optionel *">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-4">
+                                                <label for="type">Ressource : </label>
+                                            </div>
+                                            <div class="col-md-8">                            
+                                                <select id="resource" class="form-control" (change)="onChangeType()">
+                                                    <option value="Toutes les ressources" selected="selected">Toutes les ressources</option>
+                                                    <option *ngFor="let resource of currentBudgetResources; let indexOfelement=index;" value="{{resource.description}}">{{resource.description}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-4">
+                                                <label for="amount">Montant : </label>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <input type="number" min="1" id="amount" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-4">
+                                                <label for="frequency">Fréquence : </label>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <select id="frequency" class="form-control" (change)="onChangeFrequency()">
+                                                    <option value="" selected="selected">--Sélectionnez--</option>
+                                                    <option *ngFor="let frequency of budgetEntryFrequecies; let indexOfelement=index;" value="{{frequency.id}}">{{frequency.description}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row" *ngIf="errorField !=''">
+                                        <div class="form-group">
+                                            <div class="col-md-4">
+                                                <span style="color:rgb(220, 50, 35); font-size: 14px;"><i class="glyphicon glyphicon-info-sign"></i>&nbsp;{{errorField}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="form-group">
+                                            <button type="button" class="btn btn-dark btn-add" (click)="addEntry()">Soumettre</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </mdb-accordion-item>
+                    </mdb-accordion>                  
                     <div class="row">
                         <div class="col-md-6"> 
                             <button class="btn btn-dark btn-add" (click)="openAddEntry('incomes')"><i class="glyphicon glyphicon-plus"></i>&nbsp;Revenus</button>
@@ -72,63 +194,8 @@
                         <div class="col-md-6">
                             <button class="btn btn-dark btn-add" (click)="openAddEntry('expenses')"><i class="glyphicon glyphicon-plus"></i>&nbsp;Dépenses</button>
                         </div>
-                    </div>
-                    <div class="row" *ngIf="openEntryForm">
-                        <div class="form-group">
-                            <div class="col-md-12" style="text-align:center;">
-                                <h3>{{entryTypeFR}} - Nouvelle entrée</h3> 
-                            </div> 
-                        </div>
-                        <!-- <div> -->
-                            <div class="row">
-                                <div class="form-group">
-                                    <div class="col-md-4">
-                                        <label for="type">Type : </label>
-                                    </div>
-                                    <div class="col-md-8">                            
-                                        <select id="type" class="form-control" (change)="onChangeType()">
-                                            <option value="" selected="selected">--Sélectionnez--</option>
-                                            <option *ngFor="let type of bugetEntryTypes; let indexOfelement=index;" value="{{type.entryId}}">{{type.description}}</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group">
-                                    <div class="col-md-4">
-                                        <label for="amount">Montant : </label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <input type="number" min="1" id="amount" class="form-control">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group">
-                                    <div class="col-md-4">
-                                        <label for="frequency">Fréquence : </label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <select id="frequency" class="form-control" (change)="onChangeFrequency()">
-                                            <option value="" selected="selected">--Sélectionnez--</option>
-                                            <option *ngFor="let frequency of budgetEntryFrequecies; let indexOfelement=index;" value="{{frequency.id}}">{{frequency.description}}</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row" *ngIf="errorField !=''">
-                                <div class="form-group">
-                                    <div class="col-md-4">
-                                        <span style="color:rgb(220, 50, 35); font-size: 14px;"><i class="glyphicon glyphicon-info-sign"></i>&nbsp;{{errorField}}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        <div>
-                            <div class="form-group">
-                                <button type="button" class="btn btn-dark btn-add" (click)="addEntry()">Soumettre</button>
-                            </div>
-                        </div>
-                    </div>
+                    </div>                       
+                    <hr class="line-1">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -140,6 +207,18 @@
                 <div class="col-md-8">
                     <div class="row">
                         <h2 style="color: rgb(42, 131, 42);">Revenus</h2>
+                        <table style="width: 98%">
+                            <tr>
+                                <td class="grid-toolbar">
+                                    <div>
+                                        <button type="button" class="btn btn-toolBar" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Supprimer"
+                                            (click)="deleteEntry('incomes')"><i class="glyphicon glyphicon-trash"></i>&nbsp;|</button>
+                                        <button type="button" class="btn btn-toolBar" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Nouveau"
+                                            (click)="openAddEntry('incomes')"><i class="glyphicon glyphicon-file"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
                         <table>
                             <tr>
                                 <ag-grid-angular #incomesGrid

@@ -7,6 +7,9 @@ import { RouterModule, Routes } from '@angular/router';
 import { AgGridModule } from 'ag-grid-angular';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import { MdbAccordionModule } from 'mdb-angular-ui-kit/accordion';
+import { CollapseModule, MDBBootstrapModule } from 'angular-bootstrap-md';
+import { MdbCollapseModule } from 'mdb-angular-ui-kit/collapse';
 
 import { AppComponent } from './app.component';
 
@@ -24,6 +27,9 @@ import { AuthGuardService } from './services/auth-guard.service';
 import { BudgetsService } from './services/budgets.service';
 import { BudgetEntryTypesComponent } from './budget-list/budget-entry-types/budget-entry-types.component';
 import { BudgetCalculationComponent } from './budget-list/budget-calculation/budget-calculation.component';
+import { BudgetResourcesComponent } from './budget-list/budget-resources/budget-resources.component';
+
+
 
 
 const appRoutes: Routes = [
@@ -34,6 +40,7 @@ const appRoutes: Routes = [
   { path: 'budget/new', canActivate: [AuthGuardService], component: BudgetFormComponent },
   { path: 'budget/calculation', canActivate: [AuthGuardService], component: BudgetCalculationComponent },
   { path: 'budget-entry-types', canActivate: [AuthGuardService], component: BudgetEntryTypesComponent },
+  { path: 'budget-resources', canActivate: [AuthGuardService], component: BudgetResourcesComponent },
   { path: '', redirectTo: 'budgets', pathMatch: 'full' },
   { path: '**', redirectTo: 'budgets' }
 ];
@@ -49,6 +56,7 @@ const appRoutes: Routes = [
     BudgetHomeComponent,
     BudgetEntryTypesComponent,
     BudgetCalculationComponent,
+    BudgetResourcesComponent,
   ],
   imports: [
     BrowserModule,
@@ -56,6 +64,10 @@ const appRoutes: Routes = [
     ReactiveFormsModule,
     BrowserAnimationsModule,
     MatButtonToggleModule,
+    MdbAccordionModule,
+    MdbCollapseModule,
+    CollapseModule,
+    MDBBootstrapModule.forRoot(),
     ModalModule.forRoot(),
     AgGridModule.withComponents([]),
     HttpClientModule,

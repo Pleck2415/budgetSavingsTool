@@ -59,7 +59,7 @@ export class BudgetsService {
   getEntryTypeDescription(id: number, list: any) {
     var description: string = "";
     list.forEach(element => {
-      if (element.entryId == id) {
+      if (element.id == id) {
         description = element.description;
       }
     });
@@ -142,6 +142,7 @@ export class BudgetsService {
     var elementList: any[] = [];
     var incomes = new Array();
     var expenses = new Array();
+    var resources = new Array();
     firebase.database().ref("/budgets/" + userID  ).orderByValue().on("value", function(data) {   
       data.forEach(function(data) {
         var createdBy = data.val().createdBy;
@@ -150,17 +151,23 @@ export class BudgetsService {
         var description = data.val().description;
         var id = data.val().id;
         var title = data.val().title;
+        if(data.val().resources != undefined) {
+          resources = data.val().resources;
+        } else {
+          resources = null;
+          }
         if(data.val().incomes != undefined) {
           incomes = data.val().incomes;
         } else {
             incomes = null;
           }
         if(data.val().expenses != undefined) {
-          var expenses = data.val().expenses;
+          expenses = data.val().expenses;
         } else {
             expenses = null;
           }       
-        elementList.push({id: id, description: description, createdBy: createdBy, dateFrom: dateFrom, dateTo: dateTo, title: title, incomes: incomes, expenses: expenses });
+        elementList.push({id: id, description: description, createdBy: createdBy, dateFrom: dateFrom, dateTo: dateTo, 
+                            title: title, resources: resources, incomes: incomes, expenses: expenses });
       });
     });
     return elementList;

@@ -11,7 +11,7 @@ export class BudgetEntryTypesComponent implements OnInit {
 
   budgetEntryTypeForm: FormGroup;
   activeEntryValue: string = "Non";
-  elementObject = {entryId: 0, description: "", typeId: null, active: this.activeEntryValue};
+  elementObject = {id: 0, description: "", typeId: null, active: this.activeEntryValue};
   elementsList: any[] = [];
   elementObjectLoaded: boolean = false;
   entryTypes = [{id: null, description: ""}];
@@ -23,7 +23,7 @@ export class BudgetEntryTypesComponent implements OnInit {
   private gridApi;
   rowData: any[] = [];
   rolumnDefs = [
-    {headerName: 'ID', field: 'entryId', width: 50, resizable: true },
+    {headerName: 'ID', field: 'id', width: 50, resizable: true },
     {headerName: 'Description', field: 'description', width: 275, sortable: true, filter: true, resizable: true },
     {headerName: 'Type', field: 'type', width: 150, sortable: true, filter: true, resizable: true },
     {headerName: 'Actif', field: 'active', width: 75, sortable: true, filter: true },
@@ -37,10 +37,10 @@ export class BudgetEntryTypesComponent implements OnInit {
   }
 
   initForm() {    
-    document.getElementById('entryId').removeAttribute('disabled');
+    document.getElementById('id').removeAttribute('disabled');
     var entryObject = this.elementObject;
     this.budgetEntryTypeForm = this.formBuilder.group({
-      entryId: [ entryObject.entryId, Validators.required ],
+      id: [ entryObject.id, Validators.required ],
       description: [ entryObject.description, Validators.required ],
       typeId: [ entryObject.typeId, Validators.required ],
       active: [ entryObject.active, Validators.required ]
@@ -59,11 +59,11 @@ export class BudgetEntryTypesComponent implements OnInit {
   }
 
   disableField() {
-    document.getElementById('entryId').setAttribute('disabled', 'disabled');
+    document.getElementById('id').setAttribute('disabled', 'disabled');
   }
 
   getSavedElementsList() {
-    this.elementsList = this.controlTableService.getTableElements("budgetEntryTypes");
+    this.elementsList = this.controlTableService.getTableElements("budgetEntryTypes", true);
     this.loadGridsData();
   }
 
@@ -76,7 +76,7 @@ export class BudgetEntryTypesComponent implements OnInit {
     const type = document.getElementById('typeId')['value'];
     const active = this.activeEntryValue;
     if (this.controlTableService.uniqueField(tableName, description)) {
-      this.elementObject = {entryId: nextID, description: description, typeId: +type, active: active};
+      this.elementObject = {id: nextID, description: description, typeId: +type, active: active};
       this.controlTableService.saveNewElement(tableName, this.elementObject, nextID);
       this.elementObjectLoaded = true;
       this.initForm();
@@ -94,7 +94,7 @@ export class BudgetEntryTypesComponent implements OnInit {
     elementArray = [];
     this.elementsList.forEach(element => {
       // typeDescription = this.controlTableService.getTypeDescription(element.typeId);
-      var elementObject = {entryId: element.entryId , description: element.description, type: this.controlTableService.getTypeDescription(element.typeId, this.entryTypes), active: element.active};
+      var elementObject = {id: element.id , description: element.description, type: this.controlTableService.getTypeDescription(element.typeId, this.entryTypes), active: element.active};
       elementArray.push(elementObject);
     });
     this.rowData = elementArray;
@@ -111,15 +111,15 @@ export class BudgetEntryTypesComponent implements OnInit {
     this.activeEntryValue = "Non";
     const nextID = this.controlTableService.getElementNextID(tableName);
     this.elementObjectLoaded = false;
-    this.elementObject = {entryId: nextID, description: "", typeId: null, active: this.activeEntryValue};
+    this.elementObject = {id: nextID, description: "", typeId: null, active: this.activeEntryValue};
     this.initForm();
   }
 
   deleteEntry() {
     const tableName = "budgetEntryTypes";
-    const entryId = this.elementObject.entryId;
-    if (entryId.toString() != "" && entryId != null) {
-      this.controlTableService.deleteEntry(tableName, entryId.toString());
+    const id = this.elementObject.id;
+    if (id.toString() != "" && id != null) {
+      this.controlTableService.deleteEntry(tableName, id.toString());
       this.clearEntry();
       this.initForm();
       this.getSavedElementsList();
@@ -134,7 +134,7 @@ export class BudgetEntryTypesComponent implements OnInit {
     if(selectedRow[0] === undefined) {
       alert("Pas de type sélectionné!");
     } else {
-      this.elementObject = {entryId: +selectedRow[0].entryId, description: selectedRow[0].description, typeId: this.controlTableService.getTypeId(selectedRow[0].type, this.entryTypes), active: selectedRow[0].active};
+      this.elementObject = {id: +selectedRow[0].id, description: selectedRow[0].description, typeId: this.controlTableService.getTypeId(selectedRow[0].type, this.entryTypes), active: selectedRow[0].active};
       this.elementObjectLoaded = true;
       this.initForm();
       }
