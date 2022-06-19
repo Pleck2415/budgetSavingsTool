@@ -64,8 +64,8 @@ export class BudgetFormComponent implements OnInit  {
   
   incomesRowData: any;
   incomesColumnDefs = [
-    {headerName: 'Type', field: 'type', width: 250, resizable: true, sortable: true, filter: true },
-    {headerName: 'Ressource', field: 'resource', width: 175, resizable: true, sortable: true, filter: true },
+    {headerName: 'Type', field: 'type', width: 220, resizable: true, sortable: true, filter: true },
+    {headerName: 'Ressource', field: 'resource', width: 160, resizable: true, sortable: true, filter: true },
     {headerName: 'Montant', field: 'amount', cellStyle: { 'text-align': "right" }, width: 100, resizable: true, editable: true },
     {headerName: 'Fréquence', field: 'frequency', width: 140, resizable: true, sortable: true, filter: true },
     {headerName: 'Annuel', field: 'annual', cellStyle: { 'text-align': "right" }, width: 100, resizable: true },
@@ -73,8 +73,8 @@ export class BudgetFormComponent implements OnInit  {
 
   expensesRowData: any;
   expensesColumnDefs = [
-    {headerName: 'Type', field: 'type', width: 250, resizable: true, sortable: true, filter: true },
-    {headerName: 'Ressource', field: 'resource', width: 175, resizable: true, sortable: true, filter: true },
+    {headerName: 'Type', field: 'type', width: 220, resizable: true, sortable: true, filter: true },
+    {headerName: 'Ressource', field: 'resource', width: 160, resizable: true, sortable: true, filter: true },
     {headerName: 'Montant', field: 'amount', cellStyle: { 'text-align': "right" }, width: 100, resizable: true,  editable: true },
     {headerName: 'Fréquence', field: 'frequency', width: 140, resizable: true, sortable: true, filter: true },
     {headerName: 'Annuel', field: 'annual', cellStyle: { 'text-align': "right" }, width: 100, resizable: true },

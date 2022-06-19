@@ -99,7 +99,9 @@ input {
 }
 
 .ag-theme-balham {
-    width: 98%;
+    // width: 724px;
+    
+    min-width: 400px;
     height: 250px; 
     // border: 2px solid black;
     // border-radius: 5px;
@@ -137,3 +139,15 @@ input {
     color:rgb(175, 175, 175);
     } 
 }
+
+// accordion
+
+.mdb-accordion-item {
+    background-color: rgb(75, 75, 75);
+}
+
+.mdb-accordion-header {
+    color:rgb(75, 75, 75); 
+    font-size: 20px;
+}
+
