@@ -19,9 +19,9 @@
             </div>
             <div class="row">
                 <div class="col-md-4">
-                    <mdb-accordion [flush]="true" [multiple]="true">
-                        <mdb-accordion-item [collapsed]="false">
-                            <ng-template mdbAccordionItemHeader>Information du budget</ng-template>
+                    <mdb-accordion [multiple]="true">
+                        <mdb-accordion-item class="mdb-accordion-item" [collapsed]="openEntryForm">
+                            <ng-template mdbAccordionItemHeader><span class="mdb-accordion-header">Informations du budget</span></ng-template>
                             <ng-template mdbAccordionItemBody>
                                 <div class="form-group">
                                     <label for="title">Titre</label>
@@ -90,21 +90,8 @@
                                 </div>                        
                             </ng-template>
                         </mdb-accordion-item>
-                        <mdb-accordion-item>
-                            <ng-template mdbAccordionItemHeader>Tables de pilotage</ng-template>
-                            <ng-template mdbAccordionItemBody>
-                                <div class="row">
-                                    <div class="col-md-12"> 
-                                        <button class="control-table" (click)="openControlTable('budget-entry-types')">- Types d'entrées au budget</button>
-                                    </div>
-                                    <div class="col-md-12"> 
-                                        <button class="control-table" (click)="openControlTable('budget-resources')">- Ressources de budget</button>
-                                    </div>
-                                </div>
-                            </ng-template>
-                        </mdb-accordion-item>
-                        <mdb-accordion-item>
-                            <ng-template mdbAccordionItemHeader>Nouvelles entrées au budget</ng-template>
+                        <mdb-accordion-item class="mdb-accordion-item" [collapsed]="!openEntryForm">
+                            <ng-template mdbAccordionItemHeader><span class="mdb-accordion-header">Nouvelles entrées au budget</span></ng-template>
                             <ng-template mdbAccordionItemBody>
                                 <div class="row">
                                     <div class="form-group">
@@ -186,15 +173,28 @@
                                 </div>
                             </ng-template>
                         </mdb-accordion-item>
+                        <mdb-accordion-item class="mdb-accordion-item">
+                            <ng-template mdbAccordionItemHeader><span class="mdb-accordion-header">Tables de pilotage</span></ng-template>
+                            <ng-template mdbAccordionItemBody>
+                                <div class="row">
+                                    <div class="col-md-12"> 
+                                        <button class="control-table" (click)="openControlTable('budget-entry-types')">- Types d'entrées au budget</button>
+                                    </div>
+                                    <div class="col-md-12"> 
+                                        <button class="control-table" (click)="openControlTable('budget-resources')">- Ressources de budget</button>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </mdb-accordion-item>
                     </mdb-accordion>                  
-                    <div class="row">
+                    <!-- <div class="row">
                         <div class="col-md-6"> 
                             <button class="btn btn-dark btn-add" (click)="openAddEntry('incomes')"><i class="glyphicon glyphicon-plus"></i>&nbsp;Revenus</button>
                         </div>
                         <div class="col-md-6">
                             <button class="btn btn-dark btn-add" (click)="openAddEntry('expenses')"><i class="glyphicon glyphicon-plus"></i>&nbsp;Dépenses</button>
                         </div>
-                    </div>                       
+                    </div>                        -->
                     <hr class="line-1">
                     <div class="row">
                         <div class="col-md-6">
@@ -205,45 +205,55 @@
                     </div>
                 </div>
                 <div class="col-md-8">
-                    <div class="row">
-                        <h2 style="color: rgb(42, 131, 42);">Revenus</h2>
-                        <table style="width: 98%">
-                            <tr>
-                                <td class="grid-toolbar">
-                                    <div>
-                                        <button type="button" class="btn btn-toolBar" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Supprimer"
-                                            (click)="deleteEntry('incomes')"><i class="glyphicon glyphicon-trash"></i>&nbsp;|</button>
-                                        <button type="button" class="btn btn-toolBar" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Nouveau"
-                                            (click)="openAddEntry('incomes')"><i class="glyphicon glyphicon-file"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </table>
-                        <table>
-                            <tr>
-                                <ag-grid-angular #incomesGrid
-                                    class="ag-theme-balham" 
-                                    [rowData]="incomesRowData" 
-                                    [columnDefs]="incomesColumnDefs"
-                                    [pagination]="true"
-                                    [paginationPageSize]="25"                  
-                                    (cellValueChanged)="incomeCellValueChanged($event)"
-                                    (gridReady)="onIncomesGridReady($event)">
-                                </ag-grid-angular>
-                            </tr>
-                        </table>
-                        <table style="width: 98%">
-                            <tr>
-                                <td class="incomes-total-left"></td>
-                                <td class="incomes-total-left" style="width: 75px; font-weight: lighter;">Total :</td>
-                                <td class="incomes-total" style="width: 150px; text-align: right;padding-right: 10px;">{{incomesTotal}}</td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="row">
-                        <h2 style="color: rgb(200, 32, 20);">Dépenses</h2>
-                        <table>
-                            <tr>
+                    <mdb-accordion [flush]="true">
+                        <mdb-accordion-item class="mdb-accordion-item" [collapsed]="false">
+                            <ng-template mdbAccordionItemHeader><span class="mdb-accordion-header">Revenus</span></ng-template>
+                            <ng-template mdbAccordionItemBody>
+                                <table style="width: 100%">
+                                    <tr>
+                                        <td class="grid-toolbar">
+                                            <div>
+                                                <button type="button" class="btn btn-toolBar" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Supprimer"
+                                                    (click)="deleteEntry('incomes')"><i class="glyphicon glyphicon-trash"></i>&nbsp;|</button>
+                                                <button type="button" class="btn btn-toolBar" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Nouveau"
+                                                    (click)="openAddEntry('incomes')"><i class="glyphicon glyphicon-file"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                                    <ag-grid-angular #incomesGrid
+                                        class="ag-theme-balham" 
+                                        [rowData]="incomesRowData" 
+                                        [columnDefs]="incomesColumnDefs"
+                                        [pagination]="true"
+                                        [paginationPageSize]="25"                  
+                                        (cellValueChanged)="incomeCellValueChanged($event)"
+                                        (gridReady)="onIncomesGridReady($event)">
+                                    </ag-grid-angular>
+                                <table style="width: 100%">
+                                    <tr>
+                                        <td class="incomes-total-left"></td>
+                                        <td class="incomes-total-left" style="width: 75px; font-weight: lighter;">Total :</td>
+                                        <td class="incomes-total" style="width: 150px; text-align: right;padding-right: 10px;">{{incomesTotal}}</td>
+                                    </tr>
+                                </table>
+                            </ng-template>
+                        </mdb-accordion-item>
+                        <mdb-accordion-item class="mdb-accordion-item" [collapsed]="false">
+                            <ng-template mdbAccordionItemHeader><span class="mdb-accordion-header">Revenus</span></ng-template>
+                            <ng-template mdbAccordionItemBody>
+                                <table style="width: 100%">
+                                    <tr>
+                                        <td class="grid-toolbar">
+                                            <div>
+                                                <button type="button" class="btn btn-toolBar" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Supprimer"
+                                                    (click)="deleteEntry('expenses')"><i class="glyphicon glyphicon-trash"></i>&nbsp;|</button>
+                                                <button type="button" class="btn btn-toolBar" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Nouveau"
+                                                    (click)="openAddEntry('expenses')"><i class="glyphicon glyphicon-file"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
                                 <ag-grid-angular #expensesGrid
                                     class="ag-theme-balham" 
                                     [rowData]="expensesRowData" 
@@ -253,16 +263,16 @@
                                     (selectionChanged)="openSelectedExpense()"
                                     (gridReady)="onExpensesGridReady($event)">
                                 </ag-grid-angular>
-                            </tr>
-                        </table>
-                        <table style="width: 98%">
-                            <tr>
-                                <td class="incomes-total-left"></td>
-                                <td class="incomes-total-left" style="width: 75px; font-weight: lighter;">Total :</td>
-                                <td class="expenses-total" style="width: 150px; text-align: right;padding-right: 10px;">{{expensesTotal}}</td>
-                            </tr>
-                        </table>
-                    </div>
+                                <table style="width: 100%">
+                                    <tr>
+                                        <td class="incomes-total-left"></td>
+                                        <td class="incomes-total-left" style="width: 75px; font-weight: lighter;">Total :</td>
+                                        <td class="expenses-total" style="width: 150px; text-align: right;padding-right: 10px;">{{expensesTotal}}</td>
+                                    </tr>
+                                </table>
+                            </ng-template>
+                        </mdb-accordion-item>
+                    </mdb-accordion>
                 </div>                
             </div>           
         </form>
