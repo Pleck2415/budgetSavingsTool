@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChildren } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Entry } from 'src/app/models/entry.model';
 import { BudgetsService } from 'src/app/services/budgets.service';
@@ -6,7 +6,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { Router } from '@angular/router';
 import { ControlTableService } from 'src/app/services/control-table.service';
 import { Budget } from 'src/app/models/budget.model';
-import { CollapseComponent } from 'angular-bootstrap-md';
+
 @Component({
   selector: 'app-budget-form',
   templateUrl: './budget-form.component.html',
@@ -14,21 +14,12 @@ import { CollapseComponent } from 'angular-bootstrap-md';
 })
 export class BudgetFormComponent implements OnInit  {
 
-  // @ViewChildren(CollapseComponent) collapses!: CollapseComponent[];
-
-  // ngAfterViewInit() {
-  //   Promise.resolve().then(() => {
-  //     this.collapses.forEach((collapse: CollapseComponent) => {
-  //       collapse.toggle();
-  //     });
-  //   })
-  // }
-
   budgetForm: FormGroup;
   entryForm: FormGroup;
   budgetSave: Budget;
   currentBudget: Budget;
   isNewBudget: boolean = true;
+
 
   public isCollapsed = false;
 
@@ -38,13 +29,15 @@ export class BudgetFormComponent implements OnInit  {
   entryTypeFR: string;
   bugetEntryTypes = new Array();
   budgetEntryFrequecies = new Array();
+  budgetEntryResources = new Array();
+  budgetEntryResourcesText: string;
   budgetResources = new Array();
   errorField: string = "";
 
   newEntry: Entry;
   currentEntryTypeId: number = 0;
   currentEntryFrequencyId: number = 0;
-  currentBudgetResources: any[] = [{id: 99, description: "Toutes les ressources", active: "Oui"}];
+  currentBudgetResources: any[] = [];
   currentResourceObject: any;
   hasResources: boolean = false;
   addResource: boolean = true;
@@ -86,6 +79,7 @@ export class BudgetFormComponent implements OnInit  {
     this.initForm();
     this.budgetEntryFrequecies = this.budgetService.frequencyList;
     this.getAnnulalTotal();
+
   }
 
   initForm() {
@@ -129,6 +123,10 @@ export class BudgetFormComponent implements OnInit  {
           this.expensesList = [];
         }
     }
+  }
+
+  removeResourceFromSelect() {
+    console.log("Remove resource from list");
   }
 
   removeFromBudgetResources(name: string) {
@@ -308,6 +306,27 @@ export class BudgetFormComponent implements OnInit  {
     });
   }
 
+  onChangeEntryResource() {
+    this.budgetEntryResourcesText = "";
+    const resourceID = document.getElementById('entry-resource')['value'];
+    if (resourceID != "") {
+      var index = this.currentBudgetResources.findIndex(x => x.id === resourceID);
+      const resource = this.currentBudgetResources.find(item => item.id = resourceID); 
+      var newResource: boolean = true;
+      if (Array.isArray(this.budgetEntryResources) && this.budgetEntryResources) {      
+        this.budgetEntryResources.forEach(element => {
+          if (element.id == resource.id) {
+            newResource = false;
+          }
+        });
+      }
+      if (newResource) {
+        this.budgetEntryResources.push(resource);
+        document.getElementById('entry-resource').setAttribute('value', "");
+      } else alert("Cette ressource est déjà sélectionnée!");
+    }    
+  }
+
   confirmBudgetResource() {
     this.currentBudgetResources.push(this.currentResourceObject);
     var index = this.budgetResources.findIndex(x => x.description === this.currentResourceObject.description)
@@ -326,12 +345,17 @@ export class BudgetFormComponent implements OnInit  {
 
   onRemoveResource(resource) {
     if (confirm('Voulez vous supprimer cette ressource ?')) {
-      var index = this.currentBudgetResources.findIndex(x => x.id == resource.id)
+      var index = this.currentBudgetResources.findIndex(x => x === resource);
       this.currentBudgetResources.splice(index, 1);
       this.budgetResources.splice(index, 0, resource);
       this.addResource = true;
-    } else {
-      // false
+    }
+  }
+  
+  removeEntryResource(resource) {
+    if (confirm('Voulez vous supprimer cette ressource ?')) {
+      var index = this.budgetEntryResources.findIndex(x => x.id == resource.id);
+      this.budgetEntryResources.splice(index, 1);
     }
   }
 }

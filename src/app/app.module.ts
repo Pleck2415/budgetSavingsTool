@@ -29,9 +29,6 @@ import { BudgetEntryTypesComponent } from './budget-list/budget-entry-types/budg
 import { BudgetCalculationComponent } from './budget-list/budget-calculation/budget-calculation.component';
 import { BudgetResourcesComponent } from './budget-list/budget-resources/budget-resources.component';
 
-
-
-
 const appRoutes: Routes = [
   { path: 'auth/signup', component: SignupComponent },
   { path: 'auth/signin', component: SigninComponent },
