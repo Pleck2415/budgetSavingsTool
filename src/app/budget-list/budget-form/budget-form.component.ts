@@ -19,7 +19,7 @@ export class BudgetFormComponent implements OnInit  {
   budgetSave: Budget;
   currentBudget: Budget;
   isNewBudget: boolean = true;
-
+  budgetCalculation: boolean = false;
 
   public isCollapsed = false;
 
@@ -79,7 +79,7 @@ export class BudgetFormComponent implements OnInit  {
     this.initForm();
     this.budgetEntryFrequecies = this.budgetService.frequencyList;
     this.getAnnulalTotal();
-
+    this.initEntryForm();
   }
 
   initForm() {
@@ -123,6 +123,16 @@ export class BudgetFormComponent implements OnInit  {
           this.expensesList = [];
         }
     }
+  }
+
+  initEntryForm() {
+    this.entryForm = this.formBuilder.group({
+      type: [null, Validators.required],
+      detail: [null],
+      entryResource: [null],
+      amount: [null],
+      frequency: [null]
+    });
   }
 
   removeResourceFromSelect() {
@@ -181,7 +191,6 @@ export class BudgetFormComponent implements OnInit  {
   }
 
   incomeCellValueChanged(event) {
-    console.log("Value change: ",event);
     const rowIndex = +event.rowIndex;
     const amount = +event.newValue;
     const freq = this.budgetService.getFrequencyId(event.data.frequency);
@@ -227,7 +236,18 @@ export class BudgetFormComponent implements OnInit  {
     }
     const type = this.budgetService.getEntryTypeDescription(this.currentEntryTypeId, this.bugetEntryTypes) + detailText;
     const frequency = this.budgetService.getFrequencyDescription(this.currentEntryFrequencyId);
-    const resource = document.getElementById('resource')['value'];
+
+    var resource = "";
+    const len = this.budgetEntryResources.length;
+    for (let index = 0; index < len; index++) {
+      const element = this.budgetEntryResources[index];
+      if (index < (len-1)) {
+        resource += element.description + ", ";
+      } else {
+          resource += element.description;
+        }      
+    };
+
     if (type != null || frequency != null) {
       this.openEntryForm = false;
       this.newEntry = {type: type, resource: resource, 
@@ -251,8 +271,11 @@ export class BudgetFormComponent implements OnInit  {
 
     }  else {
         this.errorField = "Valeur invalide pour 'Type' ou 'Fréquence'.";
-      }  
-  }
+      }
+    this.budgetEntryResources = [];
+    this.newEntry = null;
+    this.initEntryForm();
+  }  
 
   deleteEntry(type: string) {
 
@@ -288,7 +311,8 @@ export class BudgetFormComponent implements OnInit  {
   }
 
   openCalculationForm() {
-    this.router.navigate(['/budget/calculation']);
+    // this.router.navigate(['/budget/calculation']);
+    this.budgetCalculation = true;
   }
 
   addBudgetResource() {
@@ -308,20 +332,19 @@ export class BudgetFormComponent implements OnInit  {
 
   onChangeEntryResource() {
     this.budgetEntryResourcesText = "";
-    const resourceID = document.getElementById('entry-resource')['value'];
-    if (resourceID != "") {
-      var index = this.currentBudgetResources.findIndex(x => x.id === resourceID);
-      const resource = this.currentBudgetResources.find(item => item.id = resourceID); 
+    const resourceID = +document.getElementById('entry-resource')['value'];
+    if (resourceID != undefined) {
+      // var index = this.currentBudgetResources.findIndex(x => x.id === resourceID);
       var newResource: boolean = true;
       if (Array.isArray(this.budgetEntryResources) && this.budgetEntryResources) {      
         this.budgetEntryResources.forEach(element => {
-          if (element.id == resource.id) {
+          if (element.id == resourceID) {
             newResource = false;
           }
         });
       }
       if (newResource) {
-        this.budgetEntryResources.push(resource);
+        this.budgetEntryResources.push(this.budgetResources[resourceID]);
         document.getElementById('entry-resource').setAttribute('value', "");
       } else alert("Cette ressource est déjà sélectionnée!");
     }    

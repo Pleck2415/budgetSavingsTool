@@ -59,7 +59,6 @@ export class ControlTableService {
     firebase.database().ref(tableName + "/").limitToLast(1)
     .on('child_added', function(data) {
         const myID = data.val().id;
-        console.log('Query in service: ', myID);
     if( myID == null) {
         nextID = 0;
     } else {
@@ -73,7 +72,6 @@ export class ControlTableService {
     var isUnique: boolean = true;
     firebase.database().ref(tableName + "/").orderByValue().on("value", function(data) {   
       data.forEach(function(data) {
-        console.log("In service unique description: ", data.val().description + " and newValue: " + newValue);
          if (data.val().description === newValue) {
           isUnique = false;
          };
@@ -84,8 +82,5 @@ export class ControlTableService {
 
   deleteEntry(tableName: string, id: string) {
     firebase.database().ref(tableName + "/" + id).remove();
-    // var mPostReference = firebase.database().ref(tableName + "/").child("id").child(id);
-    console.log('Entry [ ' + id + ' ] deleted!');
-    // mPostReference.remove();
   }
 }
