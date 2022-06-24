@@ -10,6 +10,7 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import { MdbAccordionModule } from 'mdb-angular-ui-kit/accordion';
 import { CollapseModule, MDBBootstrapModule } from 'angular-bootstrap-md';
 import { MdbCollapseModule } from 'mdb-angular-ui-kit/collapse';
+import {MatExpansionModule} from '@angular/material/expansion';
 
 import { AppComponent } from './app.component';
 
@@ -64,6 +65,7 @@ const appRoutes: Routes = [
     MdbAccordionModule,
     MdbCollapseModule,
     CollapseModule,
+    MatExpansionModule,
     MDBBootstrapModule.forRoot(),
     ModalModule.forRoot(),
     AgGridModule.withComponents([]),

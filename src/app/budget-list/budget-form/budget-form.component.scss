@@ -142,16 +142,16 @@ input {
 
 // accordion
 
-.mdb-accordion-item {
-    background-color: rgb(75, 75, 75);
-}
-
-.mdb-accordion-header {
-    color:rgb(75, 75, 75); 
+.accordion-header-text {
     font-size: 20px;
+    color: rgb(248, 152, 7);
 }
 
-.mdb-accordion .mdb-accordion-item-header {
-    background-color: rgb(75, 75, 75);
+.accordion-body {
+    background-color: rgb(60, 60, 60);
+}
+
+.mat-expansion-panel-back {
+    background-color: rgb(50, 50, 50);
 }
 
