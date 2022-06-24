@@ -20,7 +20,7 @@
             <div class="row">
                 <div class="col-md-4">
                     <mat-accordion>
-                        <mat-expansion-panel class="mat-expansion-panel-back" [expanded]="true">
+                        <mat-expansion-panel class="mat-expansion-panel-back" [expanded]="!budgetCalculation">
                             <mat-expansion-panel-header><span class="accordion-header-text">Informations du budget</span></mat-expansion-panel-header>
                             <ng-template matExpansionPanelContent>
                                 <div class="accordion-body">
@@ -132,7 +132,7 @@
                                                         <label for="type">Ressource : </label>
                                                     </div>
                                                     <div class="col-md-7">                            
-                                                        <select id="entry-resource" class="form-control" (change)="onChangeEntryResource()" formControlName="entryResource">
+                                                        <select id="entry-resource" class="form-control" (change)="onChangeEntryResource()" formControlName="resourcesText">
                                                             <option value="" selected="selected">--Sélectionnez--</option>
                                                             <option *ngFor="let resource of currentBudgetResources; let indexOfelement=index;" value="{{resource.id}}">{{resource.description}}</option>
                                                         </select>
@@ -290,17 +290,21 @@
                                 </div>
                             </ng-template>
                         </mat-expansion-panel>
-                        <mat-expansion-panel class="mat-expansion-panel-back" [expanded]="budgetCalculation">
-                            <mat-expansion-panel-header><span class="accordion-header-text">Calcul du budget</span></mat-expansion-panel-header>
-                            <ng-template matExpansionPanelContent>
-                                <div class="accordion-body">
-                                    <app-budget-calculation></app-budget-calculation>
-                                </div>
-                            </ng-template>
-                        </mat-expansion-panel>
                     </mat-accordion>
                 </div>                
-            </div>           
+            </div> 
+            <div class="row">
+                <div class="col-md-12">
+                    <mat-expansion-panel class="mat-expansion-panel-back" [expanded]="budgetCalculation">
+                        <mat-expansion-panel-header><span class="accordion-header-text">Calcul du budget</span></mat-expansion-panel-header>
+                        <ng-template matExpansionPanelContent>
+                            <div class="accordion-body">
+                                <app-budget-calculation></app-budget-calculation>
+                            </div>
+                        </ng-template>
+                    </mat-expansion-panel>
+                </div>
+            </div>        
         </form>
     </div>
 </div>

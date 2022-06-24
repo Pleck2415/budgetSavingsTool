@@ -197,4 +197,34 @@ export class BudgetsService {
     return nextID;
   }
 
+  getBudgetresourcesNumber(budget: Budget) {
+    var resourcesNumber: number = 0;
+    if (Array.isArray(budget.resources) && budget.resources.length > 0) {
+      resourcesNumber = budget.resources.length;
+    }
+    return resourcesNumber;
+  }
+
+  getPersonalBudget(resourceID: number, budget: Budget) {
+    const resourceName = this.getEntryTypeDescription(resourceID, budget.resources);
+    var personalExpenses: number = 0;
+    var sharedExpenses: number = 0;
+    var personalIncomes: number = 0;
+    var sharedIncomes: number = 0;
+    const expenses = budget.expenses;
+    const incomes = budget.incomes;
+    for (let index = 0; index < expenses.length; index++) {
+      const element = expenses[index];
+      const isResource = element.resourcesList.findIndex(x => x.id == resourceID);
+      if (element.resourcesList.length > 1 && isResource != -1 ) {
+        sharedExpenses += element.annual;
+      } else {
+          personalExpenses +=  element.annual;
+        }      
+    }
+    const personalBudgetObject = {resourceName: resourceName, personalExpenses: personalExpenses, sharedExpenses: sharedExpenses};
+    console.log("In get personnal Budget: ", personalBudgetObject );
+    return personalBudgetObject;
+  }
+
 }

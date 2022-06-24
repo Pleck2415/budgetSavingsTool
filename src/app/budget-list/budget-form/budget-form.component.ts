@@ -21,9 +21,6 @@ export class BudgetFormComponent implements OnInit  {
   isNewBudget: boolean = true;
   budgetCalculation: boolean = false;
 
-  public isCollapsed = false;
-
-  // modalRef: BsModalRef;
   openEntryForm: boolean = false;
   entryType: string;
   entryTypeFR: string;
@@ -58,7 +55,7 @@ export class BudgetFormComponent implements OnInit  {
   incomesRowData: any;
   incomesColumnDefs = [
     {headerName: 'Type', field: 'type', width: 220, resizable: true, sortable: true, filter: true },
-    {headerName: 'Ressource', field: 'resource', width: 160, resizable: true, sortable: true, filter: true },
+    {headerName: 'Ressource', field: 'resourcesText', width: 160, resizable: true, sortable: true, filter: true },
     {headerName: 'Montant', field: 'amount', cellStyle: { 'text-align': "right" }, width: 100, resizable: true, editable: true },
     {headerName: 'Fréquence', field: 'frequency', width: 140, resizable: true, sortable: true, filter: true },
     {headerName: 'Annuel', field: 'annual', cellStyle: { 'text-align': "right" }, width: 100, resizable: true },
@@ -67,19 +64,19 @@ export class BudgetFormComponent implements OnInit  {
   expensesRowData: any;
   expensesColumnDefs = [
     {headerName: 'Type', field: 'type', width: 220, resizable: true, sortable: true, filter: true },
-    {headerName: 'Ressource', field: 'resource', width: 160, resizable: true, sortable: true, filter: true },
+    {headerName: 'Ressource', field: 'resourcesText', width: 160, resizable: true, sortable: true, filter: true },
     {headerName: 'Montant', field: 'amount', cellStyle: { 'text-align': "right" }, width: 100, resizable: true,  editable: true },
     {headerName: 'Fréquence', field: 'frequency', width: 140, resizable: true, sortable: true, filter: true },
     {headerName: 'Annuel', field: 'annual', cellStyle: { 'text-align': "right" }, width: 100, resizable: true },
   ];
 
   ngOnInit(): void {
-    this.isNewBudget = this.budgetService.isNewBudget;
     this.getBudgetControlTables();
-    this.initForm();
     this.budgetEntryFrequecies = this.budgetService.frequencyList;
-    this.getAnnulalTotal();
+    this.isNewBudget = this.budgetService.isNewBudget;
+    this.initForm();
     this.initEntryForm();
+    this.getAnnulalTotal();
   }
 
   initForm() {
@@ -99,6 +96,7 @@ export class BudgetFormComponent implements OnInit  {
       this.currentBudget = this.budgetService.currentBudget;
       this.budgetForm.setValue(this.currentBudget);
       if (Array.isArray(this.currentBudget.resources) && this.currentBudget.resources.length ) {
+        this.currentBudgetResources = [];
         this.currentBudgetResources = this.currentBudget.resources;
         this.currentBudgetResources.forEach(element => {
           var description = element.description;
@@ -129,7 +127,7 @@ export class BudgetFormComponent implements OnInit  {
     this.entryForm = this.formBuilder.group({
       type: [null, Validators.required],
       detail: [null],
-      entryResource: [null],
+      resourcesText: [null, Validators.required],
       amount: [null],
       frequency: [null]
     });
@@ -153,8 +151,22 @@ export class BudgetFormComponent implements OnInit  {
   }
 
   getBudgetControlTables() {
-    this.bugetEntryTypes = this.cTService.getTableElements("budgetEntryTypes", true);
-    this.budgetResources = this.cTService.getTableElements("budgetResources", false);
+    this.bugetEntryTypes = [];
+    const entryTypes = this.cTService.getTableElements("budgetEntryTypes", true);
+    // console.log("Entry types in Get: ", entryTypes);
+    for (let index = 0; index < entryTypes.length; index++) {
+      const element = entryTypes[index];
+      this.bugetEntryTypes.push(element);      
+    }
+    // this.bugetEntryTypes = this.cTService.getTableElements("budgetEntryTypes", true);
+    this.budgetResources =[];
+    const resources =  this.cTService.getTableElements("budgetResources", false);
+    // console.log("Resources in Get: ", resources);
+    for (let index = 0; index < resources.length; index++) {
+      const element = resources[index];
+      this.budgetResources.push(element);
+    }
+    // this.budgetResources = this.cTService.getTableElements("budgetResources", false);
   }
 
   getAnnulalTotal() {
@@ -247,10 +259,11 @@ export class BudgetFormComponent implements OnInit  {
           resource += element.description;
         }      
     };
+    this.budgetEntryResourcesText = resource;
 
     if (type != null || frequency != null) {
       this.openEntryForm = false;
-      this.newEntry = {type: type, resource: resource, 
+      this.newEntry = {type: type, resourcesText: resource, resourcesList: this.budgetEntryResources, 
           amount: amount, frequency: frequency, annual: annual};
   
       switch (this.entryType) {

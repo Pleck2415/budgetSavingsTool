@@ -12,6 +12,7 @@ export class BudgetCalculationComponent implements OnInit {
 
   budgetForm: FormGroup;
   currentBudget: Budget;
+  numberOfResources: number = 0;
   payerParts = new Array();
   payersTotal = new Array();
   currentFrequency: string = "";
@@ -21,6 +22,9 @@ export class BudgetCalculationComponent implements OnInit {
   totalAnnualExpenses: number = 0;
   expensePerParts: number = 0;
   partZero: number = 0;
+
+  calculReady: boolean = false;
+  budgetGenerated: any[] = [];
 
   constructor(private formBuilder: FormBuilder, private budgetsService: BudgetsService) { 
     this.currentBudget = this.budgetsService.currentBudget;
@@ -40,20 +44,29 @@ export class BudgetCalculationComponent implements OnInit {
       description:  this.currentBudget.description,
       dateFrom:  this.currentBudget.dateFrom,
       dateTo:  this.currentBudget.dateTo,
+      resources:  this.currentBudget.resources,
       incomes:  this.currentBudget.incomes,
       expenses:  this.currentBudget.expenses
     });
   }
 
   getCurrentBudget() {
-    this.currentBudget.id = this.budgetsService.currentBudget.id,
-    this.currentBudget.title = this.budgetsService.currentBudget.title,
-    this.currentBudget.createdBy = this.budgetsService.currentBudget.createdBy,
-    this.currentBudget.description = this.budgetsService.currentBudget.description,
-    this.currentBudget.dateFrom = this.budgetsService.currentBudget.dateFrom,
-    this.currentBudget.dateTo = this.budgetsService.currentBudget.dateTo,
-    this.currentBudget.incomes = this.budgetsService.currentBudget.incomes,
-    this.currentBudget.expenses = this.budgetsService.currentBudget.expenses
+    this.calculReady = true;
+    this.currentBudget.id = this.budgetsService.currentBudget.id;
+    this.currentBudget.title = this.budgetsService.currentBudget.title;
+    this.currentBudget.createdBy = this.budgetsService.currentBudget.createdBy;
+    this.currentBudget.description = this.budgetsService.currentBudget.description;
+    this.currentBudget.dateFrom = this.budgetsService.currentBudget.dateFrom;
+    this.currentBudget.dateTo = this.budgetsService.currentBudget.dateTo;
+    this.currentBudget.resources = this.budgetsService.currentBudget.resources;
+    this.currentBudget.incomes = this.budgetsService.currentBudget.incomes;
+    this.currentBudget.expenses = this.budgetsService.currentBudget.expenses;
+    this.numberOfResources = this.budgetsService.getBudgetresourcesNumber(this.currentBudget);
+
+    if( this.numberOfResources == 0 || this.numberOfResources == undefined) {
+      alert("Le calcul du budget nécessite au moins une ressource!");
+      this.calculReady = false;      
+    }
   }
 
   getFrequenciesList() {
@@ -84,27 +97,26 @@ export class BudgetCalculationComponent implements OnInit {
   }
 
   generateBudget() {
-    const numberOfParts = document.getElementById('numberOfPayers')['value'];
-    const frequency: number = +document.getElementById('frequency')['value'];
-    this.currentFrequency = this.budgetsService.getFrequencyDescription(frequency);
-  
-    var totalAnnualExpenses: number = 0;
-    this.currentBudget.expenses.forEach(element => {
-      totalAnnualExpenses += element.annual;
-    })
-    this.totalAnnualExpenses = totalAnnualExpenses;
-    var totalExpensesPerFrequency = this.budgetsService.convertToAnnualExpenses(+totalAnnualExpenses, frequency); 
-    this.expensePerParts = totalAnnualExpenses/numberOfParts;
-    var payerObject: any;
-    var payersList = new Array();
-    this.payerParts.forEach(element => {
-      var payerName = document.getElementById('Name-' + element.id)['value'];
-      var payerPart = document.getElementById('Part-' + element.id)['value'];
-      var payerAmount = Math.round((totalExpensesPerFrequency*payerPart/100 + Number.EPSILON) * 100) / 100;
-      payerObject = {id: element.id, name: payerName, part: payerPart, amount: payerAmount };
-      payersList.push(payerObject);
+    var budgetGenerated: any[] = [];  
+    this.currentBudget.resources.forEach(element => {
+        var personalBudgetObject = this.budgetsService.getPersonalBudget(element.id, this.currentBudget);
+        budgetGenerated.push(personalBudgetObject);
     });
-    console.log("Payeurs: ", payersList);
-    this.payersTotal = payersList;
+    console.log("In generate Budget: ", budgetGenerated );
+    this.budgetGenerated = budgetGenerated;
+  }
+
+  onChangeBudgetFrequency(index: number, expenseType: string) {
+    const frequency: number = +document.getElementById('personnalFrequency')['value'];
+    const personnalFrequency = this.budgetsService.getFrequencyDescription(frequency);
+    const persoExpWithFreq = this.budgetsService.convertToAnnualExpenses(this.budgetGenerated[index].personalExpenses, frequency);
+    const shFrequency: number = +document.getElementById('sharedFrequency')['value'];
+    const sharedFrequency = this.budgetsService.getFrequencyDescription(shFrequency);
+    const sharedExpWithFreq = this.budgetsService.convertToAnnualExpenses(this.budgetGenerated[index].personalExpenses, shFrequency);
+    if (expenseType === "personnal") {
+      this.budgetGenerated[index].patchValue({persoExpWithFreq: persoExpWithFreq, persoFrequency: personnalFrequency});
+    } else {
+      this.budgetGenerated[index].patchValue({sharedExpWithFreq: sharedExpWithFreq, sharedFrequency: sharedFrequency});
+    }
   }
 }

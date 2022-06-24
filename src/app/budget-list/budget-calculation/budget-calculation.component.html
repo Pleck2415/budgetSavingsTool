@@ -36,17 +36,117 @@
             </div>
             <hr class="line-1">   
             <div class="row">
-                <div class="col-md-2">
-                    <label for="numberOfPayers">Nombre de payeur</label>
-                    <input type="number" id="numberOfPayers" min="1" class="form-control" (change)="getPayerParts($event)">
+                <div class="col-md-12">
+                    <label for="numberOfPayers">IL y a ({{ numberOfResources }}) ressources pour ce budget</label>
+                    <div class="row">
+                        <div *ngFor="let resource of currentBudget.resources">
+                            <button type="button" class="btn btn-dark btn-add" (click)="generateBudget()">
+                                <i class="bi bi-calculator-fill"></i>
+                            </button>&nbsp;
+                            <span>{{resource.description}}</span><br>
+                        </div>
+                    </div>
                 </div>
-                <div class="row" *ngIf="hasParts">
+            </div>
+            <!-- <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <button class="btn btn-dark btn-add" (click)="generateBudget()" [disabled]="!calculReady"><i class="bi bi-calculator-fill"></i>&nbsp;Calculer</button><br>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row" *ngFor="let budget of budgetGenerated; let indexOfBudget = index;">
+                        <div class="row">
+                            <span>{{budget.resourceName}}</span>
+                            <hr class="line-1">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <span>Dépenses personnelles (annuel) :</span>
+                            </div>
+                            <div class="col-md-4">
+                                <span>{{budget.personalExpenses}}</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <label for="personnalFrequency">Fréquence des paiements</label>
+                                <select id="personnalFrequency" class="form-control frequency-generate" (change)="onChangeBudgetFrequency(indexOfBudget, 'personnal')">
+                                    <option value="" selected="selected">--Sélectionnez--</option>
+                                    <option *ngFor="let frequency of budgetEntryFrequecies; let indexOfelement = index;" value="{{frequency.id}}">{{frequency.description}}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <span>{{budget.persoExpWithFreq}}</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                               <span>Dépenses partagées (annuel) :</span>
+                            </div>
+                            <div class="col-md-4">
+                                <span>{{budget.sharedExpenses}}</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <label for="sharedFrequency">Fréquence des paiements</label>
+                                <select id="sharedFrequency" class="form-control" (change)="onChangeBudgetFrequency(indexOfBudget, 'shared')">
+                                    <option value="" selected="selected">--Sélectionnez--</option>
+                                    <option *ngFor="let frequency of budgetEntryFrequecies; let indexOfelement = index;" value="{{frequency.id}}">{{frequency.description}}</option>
+                                </select>
+                            </div>
+                            <div class="com-md-4">
+                                <span>{{budget.sharedExpWithFreq}}</span>
+                            </div>
+                        </div>
+                        <hr class="line-2">
+                    </div>
+                </div>
+
+<!-- 
+                    <table style="border: 1px solid beige">
+                        <tr>
+                            <th>Perso.(annuel)</th>
+                            <th>Fréq.</th>
+                            <th>Perso.(fréq.)</th>
+                            <th>Partagé(annuel)</th>
+                            <th>Fréq.</th>
+                            <th>Partagé(fréq.)</th>
+                        </tr>
+                        <tr *ngFor="let budget of budgetGenerated; let indexOfBudget = index;">
+                            <td>{{budget.personalExpenses}}</td>
+                            <td>
+                                <select id="personnalFrequency" class="form-control" (change)="onChangeBudgetFrequency(indexOfBudget, 'personnal')">
+                                    <option value="" selected="selected">--Sélectionnez--</option>
+                                    <option *ngFor="let frequency of budgetEntryFrequecies; let indexOfelement = index;" value="{{frequency.id}}">{{frequency.description}}</option>
+                                </select>
+                            </td>
+                            <td>{{budget.persoExpWithFreq}}</td>
+                            <td>{{budget.sharedExpenses}}</td>
+                            <td>
+                                <select id="sharedFrequency" class="form-control" (change)="onChangeBudgetFrequency(indexOfBudget, 'shared')">
+                                    <option value="" selected="selected">--Sélectionnez--</option>
+                                    <option *ngFor="let frequency of budgetEntryFrequecies; let indexOfelement = index;" value="{{frequency.id}}">{{frequency.description}}</option>
+                                </select>
+                            </td>
+                            <td>{{budget.sharedExpWithFreq}}</td>
+                        </tr>
+                    </table>
+                </div> -->
+
+
+                <!-- <div class="row" *ngIf="hasParts">
                     <div *ngFor="let part of payerParts; let indexOfelement=index;">
                         <div class="col-md-4">
                             <label for="payerName">Nom du {{part.payer}}</label>
                             <input type="text" id="Name-{{part.id}}" class="form-control">
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <label for="payerPart">Part du {{part.payer}}</label>
                             <input type="number" min="0" max="100" id="Part-{{part.id}}" class="form-control">
                         </div>                                                            
@@ -66,7 +166,7 @@
                         <div class="col-md-12">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <button class="btn btn-dark btn-add" (click)="generateBudget()"><i class="bi bi-calculator-fill"></i>&nbsp;Calculer</button>
+                                    <button class="btn btn-dark btn-add" (click)="generateBudget()" [disabled]="!calculReady"><i class="bi bi-calculator-fill"></i>&nbsp;Calculer</button>
                                 </div>
                             </div>
                         </div>
@@ -87,7 +187,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </form>
     </div>
