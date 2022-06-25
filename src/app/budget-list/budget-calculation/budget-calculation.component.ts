@@ -25,6 +25,7 @@ export class BudgetCalculationComponent implements OnInit {
 
   calculReady: boolean = false;
   budgetGenerated: any[] = [];
+  personalBudget = new Array();
 
   constructor(private formBuilder: FormBuilder, private budgetsService: BudgetsService) { 
     this.currentBudget = this.budgetsService.currentBudget;
@@ -106,17 +107,21 @@ export class BudgetCalculationComponent implements OnInit {
     this.budgetGenerated = budgetGenerated;
   }
 
-  onChangeBudgetFrequency(index: number, expenseType: string) {
+  onChangeBudgetFrequency(index: number) {
+    var persoExpWithFreq: number = 0;
+    var sharedExpWithFreq: number = 0;
+    var resourceIndex = this.personalBudget.findIndex(element => element.resourceID == index);
     const frequency: number = +document.getElementById('personnalFrequency')['value'];
-    const personnalFrequency = this.budgetsService.getFrequencyDescription(frequency);
-    const persoExpWithFreq = this.budgetsService.convertToAnnualExpenses(this.budgetGenerated[index].personalExpenses, frequency);
+    persoExpWithFreq = this.budgetsService.convertToAnnualExpenses(this.budgetGenerated[index].personalExpenses, frequency);
     const shFrequency: number = +document.getElementById('sharedFrequency')['value'];
-    const sharedFrequency = this.budgetsService.getFrequencyDescription(shFrequency);
-    const sharedExpWithFreq = this.budgetsService.convertToAnnualExpenses(this.budgetGenerated[index].personalExpenses, shFrequency);
-    if (expenseType === "personnal") {
-      this.budgetGenerated[index].patchValue({persoExpWithFreq: persoExpWithFreq, persoFrequency: personnalFrequency});
-    } else {
-      this.budgetGenerated[index].patchValue({sharedExpWithFreq: sharedExpWithFreq, sharedFrequency: sharedFrequency});
-    }
-  }
+    sharedExpWithFreq = this.budgetsService.convertToAnnualExpenses(this.budgetGenerated[index].personalExpenses, shFrequency);
+    var personalBudgetObject = {resourceID: index, persoExpWithFreq: persoExpWithFreq, sharedExpWithFreq: sharedExpWithFreq };
+    if (resourceIndex != -1) {
+        this.personalBudget[resourceIndex].persoExpWithFreq = persoExpWithFreq;
+        this.personalBudget[resourceIndex].sharedExpWithFreq = sharedExpWithFreq;
+    } else {     
+        personalBudgetObject = {resourceID: index, persoExpWithFreq: persoExpWithFreq, sharedExpWithFreq: sharedExpWithFreq };     
+        this.personalBudget.push(personalBudgetObject);
+      }
+    }     
 }
