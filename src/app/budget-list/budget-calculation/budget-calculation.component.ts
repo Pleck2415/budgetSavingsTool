@@ -17,7 +17,11 @@ export class BudgetCalculationComponent implements OnInit {
   payersTotal = new Array();
   currentFrequency: string = "";
   hasParts: boolean = false;
-  budgetEntryFrequecies = new Array();
+  budgetEntryFrequencies = new Array();
+  allFrequencies: string = "Voir toutes les fréquences";
+  allSharedFrequencies: string = "Voir toutes les fréquences";
+  viewAllFrequencies: boolean = false;
+  viewAllSharedFrequencies: boolean = false;
   currentEntryFrequencyId: number = 0;
   totalAnnualExpenses: number = 0;
   expensePerParts: number = 0;
@@ -26,6 +30,16 @@ export class BudgetCalculationComponent implements OnInit {
   calculReady: boolean = false;
   budgetGenerated: any[] = [];
   personalBudget = new Array();
+  personalBudgetResources = new Array();
+  selectedResourceName: string = "";
+  selectedResourceBudget: any;
+  selectedResourcePersonalExpenses: number = 0;
+  selectedResourcePersonalFrequency: string = "";
+  selectedResourcePersonalAllFrequencies: any[] = [];
+  selectedResourceSharedExpenses: number = 0;
+  selectedResourceSharedFrequency: string = "";
+  selectedResourceSharedAllFrequencies: any[] = [];  
+
 
   constructor(private formBuilder: FormBuilder, private budgetsService: BudgetsService) { 
     this.currentBudget = this.budgetsService.currentBudget;
@@ -33,6 +47,7 @@ export class BudgetCalculationComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+    this.generateBudgetResource();
   }
 
   initForm() {
@@ -71,8 +86,9 @@ export class BudgetCalculationComponent implements OnInit {
   }
 
   getFrequenciesList() {
-    this.budgetsService.frequencyList.forEach(element => {
-      this.budgetEntryFrequecies.push({id: element.id, description: element.description});
+    const freqList = this.budgetsService.frequencyList;
+    freqList.forEach(element => {
+      this.budgetEntryFrequencies.push(element);
     });
   }
 
@@ -90,38 +106,91 @@ export class BudgetCalculationComponent implements OnInit {
     this.payerParts = payerList;
   }
 
-  onChangeFrequency() {
-    const value: number = document.getElementById('frequency')['value'];
-    if (value != null) {
-      this.currentEntryFrequencyId = value;
-    }
+  onChangeResource() {
+    var resourceID: number = document.getElementById('resource')['value'];
+    var resourceIndex = this.personalBudgetResources.findIndex(element => element.id == resourceID);
+    const resourceName = this.personalBudgetResources[resourceIndex].description;
+    this.selectedResourceName = resourceName;
+    this.getPersonalBudget(resourceID);
   }
 
-  generateBudget() {
-    var budgetGenerated: any[] = [];  
-    this.currentBudget.resources.forEach(element => {
-        var personalBudgetObject = this.budgetsService.getPersonalBudget(element.id, this.currentBudget);
-        budgetGenerated.push(personalBudgetObject);
-    });
-    console.log("In generate Budget: ", budgetGenerated );
-    this.budgetGenerated = budgetGenerated;
+  getPersonalBudget(resourcID) {
+    var personalBudget =  this.budgetsService.getPersonalBudget(resourcID, this.currentBudget);
+    this.selectedResourceBudget = personalBudget;
   }
 
-  onChangeBudgetFrequency(index: number) {
-    var persoExpWithFreq: number = 0;
-    var sharedExpWithFreq: number = 0;
-    var resourceIndex = this.personalBudget.findIndex(element => element.resourceID == index);
-    const frequency: number = +document.getElementById('personnalFrequency')['value'];
-    persoExpWithFreq = this.budgetsService.convertToAnnualExpenses(this.budgetGenerated[index].personalExpenses, frequency);
-    const shFrequency: number = +document.getElementById('sharedFrequency')['value'];
-    sharedExpWithFreq = this.budgetsService.convertToAnnualExpenses(this.budgetGenerated[index].personalExpenses, shFrequency);
-    var personalBudgetObject = {resourceID: index, persoExpWithFreq: persoExpWithFreq, sharedExpWithFreq: sharedExpWithFreq };
-    if (resourceIndex != -1) {
-        this.personalBudget[resourceIndex].persoExpWithFreq = persoExpWithFreq;
-        this.personalBudget[resourceIndex].sharedExpWithFreq = sharedExpWithFreq;
-    } else {     
-        personalBudgetObject = {resourceID: index, persoExpWithFreq: persoExpWithFreq, sharedExpWithFreq: sharedExpWithFreq };     
-        this.personalBudget.push(personalBudgetObject);
+  onChangePaymentsFrequency(type: string) {
+    var amount: number = 0;
+    var frequency: number = 0;
+    switch(type) {
+      case("personal"): {
+        amount = +this.selectedResourceBudget.personalExpensesTotal;
+        frequency = +document.getElementById('personnalFrequency')['value'];
+        this.selectedResourcePersonalFrequency = "";
+        this.selectedResourcePersonalFrequency = this.budgetsService.getFrequencyDescription(frequency).toLowerCase();
+        if (frequency != null) {
+          var freqPayments = (this.budgetsService.convertToAnnualExpenses(amount, frequency)).toFixed(2);
+          this.selectedResourcePersonalExpenses = +freqPayments;
+        }
+        break;
       }
-    }     
+      case("shared"): {
+        amount = +this.selectedResourceBudget.sharedExpensesTotal;
+        frequency = +document.getElementById('sharedFrequency')['value'];
+        this.selectedResourceSharedFrequency = "";
+        this.selectedResourceSharedFrequency = this.budgetsService.getFrequencyDescription(frequency).toLowerCase();
+        if (frequency != null) {
+          var freqPayments = (this.budgetsService.convertToAnnualExpenses(amount, frequency)).toFixed(2);
+          this.selectedResourceSharedExpenses = +freqPayments;
+        }
+        break;
+      }
+    };
+  }
+
+  getAllFrequenciesAmount() {
+    if (this.viewAllFrequencies == false) {
+      this.viewAllFrequencies = true;
+      this.allFrequencies = "Cacher les fréquences";
+    } else {
+        this.viewAllFrequencies = false;
+        this.allFrequencies = "Voir toutes les fréquences";
+      }
+    this.selectedResourcePersonalAllFrequencies = [];
+    const totalAmount: number = +this.selectedResourceBudget.personalExpensesTotal;
+    this.budgetEntryFrequencies.forEach(element => {
+      var frequencyID: number = element.id;
+      var amount = (this.budgetsService.convertToAnnualExpenses(totalAmount, frequencyID)).toFixed(2);
+      var frequency = this.budgetsService.getFrequencyDescription(frequencyID);
+
+      var freqObject = {frequency: frequency, amount: amount};
+      this.selectedResourcePersonalAllFrequencies.push(freqObject);
+    });
+  }
+
+  getAllSharedFrequenciesAmount() {
+    if (this.viewAllSharedFrequencies == false) {
+      this.viewAllSharedFrequencies = true;
+      this.allSharedFrequencies = "Cacher les fréquences";
+    } else {
+        this.viewAllSharedFrequencies = false;
+        this.allSharedFrequencies = "Voir toutes les fréquences";
+      }
+    this.selectedResourceSharedAllFrequencies = [];
+    const totalAmount: number = +this.selectedResourceBudget.sharedExpensesTotal;
+    this.budgetEntryFrequencies.forEach(element => {
+      var frequencyID: number = element.id;
+      var amount = (this.budgetsService.convertToAnnualExpenses(totalAmount, frequencyID)).toFixed(2);
+      var frequency = this.budgetsService.getFrequencyDescription(frequencyID);
+
+      var freqObject = {frequency: frequency, amount: amount};
+      this.selectedResourceSharedAllFrequencies.push(freqObject);
+    });
+  }
+
+  generateBudgetResource() {
+    this.currentBudget.resources.forEach(element => {
+      this.personalBudgetResources.push(element);
+    });
+  }
 }

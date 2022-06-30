@@ -17,8 +17,34 @@ label {
     width: 95%;
 }
 
+.btn-add {
+    min-width: 125px;
+}
+
 .frequency-generate {
-    width: 100px;
+    width: 250px;
     color: black;
 }
 
+th, td {
+    border: 2px solid black;
+    padding: 10px;
+    font-size: 12;
+    font-weight: normal;
+}
+
+table {
+    width: 100%;
+}
+
+.td-amount {
+    text-align: right;
+}
+
+.payment {
+    border: 2px solid black; 
+    background-color: beige; 
+    color: black; 
+    font-size: 24px; 
+    font-weight: bolder;
+}

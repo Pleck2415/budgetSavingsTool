@@ -10,11 +10,11 @@ import { Router } from '@angular/router';
 export class BudgetsService {
 
   frequencyList = [
-    {id: 0, description: "Par jour"}, 
-    {id: 1, description: "Par semaine"}, 
+    {id: 0, description: "Quotidien"}, 
+    {id: 1, description: "Hebdomadaire"}, 
     {id: 2, description: "Aux deux semaines"}, 
     {id: 3, description: "Bimensuel"}, 
-    {id: 4, description: "Par mois"}, 
+    {id: 4, description: "Mensuel"}, 
     {id: 5, description: "Annuel"}
   ];
 
@@ -126,7 +126,8 @@ export class BudgetsService {
         break;
       }
     };
-    return annualAmount;
+    var totalAmount = Math.round((annualAmount + Number.EPSILON) * 100) / 100
+    return totalAmount;
   }
 
   getAnnualTotal(incomesList: any[]) {
@@ -187,7 +188,7 @@ export class BudgetsService {
     firebase.database().ref(tableName + "/" + userID + "/").limitToLast(1)
     .on('child_added', function(data) {
         const myID = data.val().id;
-        console.log('Query in service: ', myID);
+        // console.log('Query in service: ', myID);
     if( myID == null) {
         nextID = 0;
     } else {
@@ -207,22 +208,33 @@ export class BudgetsService {
 
   getPersonalBudget(resourceID: number, budget: Budget) {
     const resourceName = this.getEntryTypeDescription(resourceID, budget.resources);
-    var personalExpenses: number = 0;
-    var sharedExpenses: number = 0;
+    var personalExpensesList = new Array();
+    var personalExpensesTotal: number = 0;
+    var sharedExpensesList= new Array();
+    var sharedExpensesTotal: number = 0;
     var personalIncomes: number = 0;
     var sharedIncomes: number = 0;
     const expenses = budget.expenses;
     const incomes = budget.incomes;
     for (let index = 0; index < expenses.length; index++) {
       const element = expenses[index];
-      const isResource = element.resourcesList.findIndex(x => x.id == resourceID);
-      if (element.resourcesList.length > 1 && isResource != -1 ) {
-        sharedExpenses += element.annual;
-      } else {
-          personalExpenses +=  element.annual;
-        }      
+      var resourceIndex = element.resourcesList.findIndex(x => x.id == resourceID);
+      console.log("EntryObject:");
+      console.log("- resourceID: ", resourceID);
+      console.log("- resourceIndex: ", resourceIndex);
+      console.log("- elementAmount: " , element.resourcesList);
+      console.log("- resourcesList: " , element.resourcesList);
+      if ( resourceIndex != -1 ) {
+        if (element.resourcesList.length > 1) {
+          sharedExpensesTotal += element.annual;
+          sharedExpensesList.push(element);
+        } else {
+          personalExpensesTotal +=  element.annual;
+          personalExpensesList.push(element);
+          }      
+      }
     }
-    const personalBudgetObject = {resourceName: resourceName, personalExpenses: personalExpenses, sharedExpenses: sharedExpenses};
+    const personalBudgetObject = {resourceName: resourceName, personalExpensesList: personalExpensesList, personalExpensesTotal: personalExpensesTotal, sharedExpensesList: sharedExpensesList, sharedExpensesTotal: sharedExpensesTotal};
     console.log("In get personnal Budget: ", personalBudgetObject );
     return personalBudgetObject;
   }

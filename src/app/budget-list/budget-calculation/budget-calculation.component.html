@@ -37,72 +37,157 @@
             <hr class="line-1">   
             <div class="row">
                 <div class="col-md-12">
-                    <label for="numberOfPayers">IL y a ({{ numberOfResources }}) ressources pour ce budget</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <button tyep="button" class="btn btn-dark btn-add" (click)="generateBudget()"><i class="bi bi-calculator-fill"></i>&nbsp;Calculer</button>
-                    <br>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="row" *ngFor="let budget of budgetGenerated; let indexOfBudget = index;">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="resource">Sélectionnez la ressource: </label>
+                        </div>
+                        <div class="col-md-9">
+                            <select id="resource" class="form-control frequency-generate" (change)="onChangeResource()">
+                                <option value="" selected="selected">--Sélectionnez--</option>
+                                <option *ngFor="let resource of personalBudgetResources;" value="{{resource.id}}">{{resource.description}}</option>
+                            </select><br>
+                        </div>
+                    </div>
+                    <div class="row" *ngIf="selectedResourceName">
                         <div class="row">
                             <div class="col-md-12">
-                                <div>
-                                    <span>{{budget.resourceName}}</span>
-                                </div>
-                                <hr class="line-1">
+                                <h1>Budget de {{selectedResourceName}}</h1>
                             </div>
-                        </div>
+                        </div> 
+                        <hr>
                         <div class="row">
-                            <div class="col-md-5">
-                                <span>Dépenses personnelles (annuel) :</span>
-                            </div>
-                            <div class="col-md-2" style="text-align: right;">
-                                <span>{{budget.personalExpenses}}&nbsp;$</span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-5">
-                               <span>Dépenses partagées (annuel) :</span>
-                            </div>
-                            <div class="col-md-2" style="text-align: right;">
-                                <span>{{budget.sharedExpenses}}&nbsp;$</span>
-                            </div>
-                        </div>
-                        <div class="row">                                                    
-                           <div class="col-md-8">
-                                <label for="personnalFrequency">Choisiseez la fréquence des paiements pour les dépenses annuelles.</label>
-                                <select id="personnalFrequency" class="form-control frequency-generate" (change)="onChangeBudgetFrequency(indexOfBudget)">
-                                    <option value="" selected="selected">--Sélectionnez--</option>
-                                    <option *ngFor="let frequency of budgetEntryFrequecies; let indexOfelement = index;" value="{{frequency.id}}">{{frequency.description}}</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <div style="border: 2px solid black; height: 40px; width: 75px; padding: 5px;">
-                                    <span>{{personalBudget[indexOfBudget].persoExpWithFreq}}</span>
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h2>Dépenses personnelles (annuel)</h2><br>
+                                    </div>
                                 </div>
-                            </div>
-                            <div>
-                                <hr class="line-2">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <table>
+                                            <tr>
+                                                <th>Description</th>
+                                                <th class="td-amount">Montant</th>
+                                            </tr>
+                                            <tr *ngFor="let persoEntry of selectedResourceBudget.personalExpensesList;">
+                                                <td>{{persoEntry.type}}</td>
+                                                <td class="td-amount">{{persoEntry.annual}} $</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="td-amount"><b>Total</b></td>
+                                                <td class="td-amount"><b>{{selectedResourceBudget.personalExpensesTotal}} $</b></td><br>
+                                            </tr>
+                                        </table><br>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="row">                                                    
+                                            <div class="col-md-12">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label for="personnalFrequency">Sélectionnez la fréquence de paiements souhaitée : </label>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <select id="personnalFrequency" class="form-control frequency-generate" (change)="onChangePaymentsFrequency('personal')">
+                                                            <option value="" selected="selected">--Sélectionnez--</option>
+                                                            <option *ngFor="let frequency of budgetEntryFrequencies;" value="{{frequency.id}}">{{frequency.description}}</option>
+                                                        </select>
+                                                    </div><br><br><br>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <span style="font-weight: normal;font-size: 18px;" *ngIf="selectedResourcePersonalExpenses != 0">Voici votre paiement {{selectedResourcePersonalFrequency}} :&nbsp;&nbsp;</span><span class="payment" *ngIf="selectedResourcePersonalExpenses != 0"> {{selectedResourcePersonalExpenses}} $</span>
+                                            </div><br><br>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <button type="button" class="btn btn-dark btn-add" (click)="getAllFrequenciesAmount()">{{allFrequencies}}</button><br><br>
+                                            </div>
+                                        </div> 
+                                        <div class="row" *ngIf="viewAllFrequencies">
+                                            <div class="col-md-12">
+                                                <div class="row" *ngFor="let freqAmount of selectedResourcePersonalAllFrequencies;">
+                                                    <div class="col-md-8">{{freqAmount.frequency}} :</div>
+                                                    <div class="col-md-4" style="text-align: right;">{{freqAmount.amount}} $</div>
+                                                </div>
+                                            </div><br>
+                                        </div>
+                                    </div>
+                                </div>                                                   
                             </div>
                         </div>
-                        <!-- <div class="row">
-                            <div class="col-md-8">
-                                <label for="sharedFrequency">Fréquence des paiements</label>
-                                <select id="sharedFrequency" class="form-control" (change)="onChangeBudgetFrequency(indexOfBudget, 'shared')">
-                                    <option value="" selected="selected">--Sélectionnez--</option>
-                                    <option *ngFor="let frequency of budgetEntryFrequecies; let indexOfelement = index;" value="{{frequency.id}}">{{frequency.description}}</option>
-                                </select>
+                        <hr class="line-2">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h2>Dépenses partagés (annuel)</h2><br>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <table>
+                                            <tr>
+                                                <th>Description</th>
+                                                <th class="td-amount">Montant</th>
+                                            </tr>
+                                            <tr *ngFor="let sharedEntry of selectedResourceBudget.sharedExpensesList;">
+                                                <td>{{sharedEntry.type}}</td>
+                                                <td class="td-amount">{{sharedEntry.annual}} $</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="td-amount"><b>Total</b></td>
+                                                <td class="td-amount"><b>{{selectedResourceBudget.sharedExpensesTotal}} $</b></td><br>
+                                            </tr>
+                                        </table><br>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label for="sharedFrequency">Sélectionnez la fréquence de paiements souhaitée : </label>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <select id="sharedFrequency" class="form-control frequency-generate" (change)="onChangePaymentsFrequency('shared')">
+                                                            <option value="" selected="selected">--Sélectionnez--</option>
+                                                            <option *ngFor="let frequency of budgetEntryFrequencies;" value="{{frequency.id}}">{{frequency.description}}</option>
+                                                        </select>
+                                                    </div><br><br><br>
+                                                </div>
+                                            </div>
+                                        </div>                            
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <span style="font-weight: normal; font-size: 18px;" *ngIf="selectedResourceSharedExpenses != 0">Voici votre paiement {{selectedResourceSharedFrequency}} :&nbsp;&nbsp;</span><span class="payment" *ngIf="selectedResourceSharedExpenses != 0"> {{selectedResourceSharedExpenses}} $</span>
+                                            </div><br><br>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <button type="button" class="btn btn-dark btn-add" (click)="getAllSharedFrequenciesAmount()">{{allSharedFrequencies}}</button><br><br>
+                                            </div>
+                                        </div> 
+                                        <div class="row" *ngIf="viewAllSharedFrequencies">
+                                            <div class="col-md-12">
+                                                <div class="row" *ngFor="let freqAmount of selectedResourceSharedAllFrequencies;">
+                                                    <div class="col-md-8">{{freqAmount.frequency}} :</div>
+                                                    <div class="col-md-4" style="text-align: right;">{{freqAmount.amount}} $</div>
+                                                </div>
+                                            </div><br>
+                                        </div>     
+                                    </div>
+                                </div>       
                             </div>
-                            <div class="com-md-4">
-                                <span>{{budget.sharedExpWithFreq}}</span>
-                            </div>
-                        </div> -->
-
+                        </div>                  
                     </div>
                 </div>
             </div>

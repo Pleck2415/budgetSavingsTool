@@ -15,6 +15,7 @@ import { Budget } from 'src/app/models/budget.model';
 export class BudgetFormComponent implements OnInit  {
 
   budgetForm: FormGroup;
+  budgetFormDirty: boolean = false;
   entryForm: FormGroup;
   budgetSave: Budget;
   currentBudget: Budget;
@@ -93,6 +94,7 @@ export class BudgetFormComponent implements OnInit  {
       expenses: [null]
     });
     if(!this.isNewBudget) {
+      this.budgetFormDirty = false;
       this.currentBudget = this.budgetService.currentBudget;
       this.budgetForm.setValue(this.currentBudget);
       if (Array.isArray(this.currentBudget.resources) && this.currentBudget.resources.length ) {
@@ -104,6 +106,7 @@ export class BudgetFormComponent implements OnInit  {
         });
         this.hasResources = true;
       } else {
+          this.budgetFormDirty = true;
           this.currentBudgetResources = [];
         }
 
@@ -278,6 +281,7 @@ export class BudgetFormComponent implements OnInit  {
           break;
         }
       }
+      this.budgetFormDirty = true;
       this.errorField = "";
       this.bugetEntryTypes = [];
       this.getBudgetControlTables()
@@ -300,6 +304,7 @@ export class BudgetFormComponent implements OnInit  {
     this.budgetForm.patchValue({expenses: this.expensesList});
     this.budgetSave = this.budgetForm.value;
     this.budgetService.saveBudget(this.budgetSave);
+    this.budgetFormDirty= false;
     alert("Budget saved!");
   }
 
