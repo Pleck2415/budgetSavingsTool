@@ -207,36 +207,44 @@ export class BudgetsService {
   }
 
   getPersonalBudget(resourceID: number, budget: Budget) {
-    const resourceName = this.getEntryTypeDescription(resourceID, budget.resources);
-    var personalExpensesList = new Array();
-    var personalExpensesTotal: number = 0;
-    var sharedExpensesList= new Array();
-    var sharedExpensesTotal: number = 0;
-    var personalIncomes: number = 0;
-    var sharedIncomes: number = 0;
     const expenses = budget.expenses;
     const incomes = budget.incomes;
-    for (let index = 0; index < expenses.length; index++) {
-      const element = expenses[index];
-      var resourceIndex = element.resourcesList.findIndex(x => x.id == resourceID);
-      console.log("EntryObject:");
-      console.log("- resourceID: ", resourceID);
-      console.log("- resourceIndex: ", resourceIndex);
-      console.log("- elementAmount: " , element.resourcesList);
-      console.log("- resourcesList: " , element.resourcesList);
-      if ( resourceIndex != -1 ) {
-        if (element.resourcesList.length > 1) {
-          sharedExpensesTotal += element.annual;
-          sharedExpensesList.push(element);
-        } else {
-          personalExpensesTotal +=  element.annual;
-          personalExpensesList.push(element);
-          }      
-      }
-    }
-    const personalBudgetObject = {resourceName: resourceName, personalExpensesList: personalExpensesList, personalExpensesTotal: personalExpensesTotal, sharedExpensesList: sharedExpensesList, sharedExpensesTotal: sharedExpensesTotal};
-    console.log("In get personnal Budget: ", personalBudgetObject );
+    const resourceName = this.getEntryTypeDescription(resourceID, budget.resources);
+    const expensesObject = this.getEntriesListAndTotal(expenses, resourceID);
+    const incomesObject = this.getEntriesListAndTotal(incomes, resourceID);
+  
+    const personalBudgetObject = {resourceName: resourceName, 
+                                    personalExpensesList: expensesObject.personalEntriesList, personalExpensesTotal: expensesObject.personalEntriesTotal, 
+                                    sharedExpensesList: expensesObject.sharedEntriesList, sharedExpensesTotal: expensesObject.sharedEntriesTotal,
+                                    personalIncomesList: incomesObject.personalEntriesList, personalIncomesTotal: incomesObject.personalEntriesTotal, 
+                                    sharedIncomesList: incomesObject.sharedEntriesList, sharedIncomesTotal: incomesObject.sharedEntriesTotal
+                                  };
+    // console.log("In get personnal Budget: ", personalBudgetObject );
     return personalBudgetObject;
   }
 
+  getEntriesListAndTotal(entries: any, resourceID: number) {
+    var personalEntriesList = new Array();
+    var personalEntriesTotal: number = 0;
+    var sharedEntriesList= new Array();
+    var sharedEntriesTotal: number = 0;
+    for (let index = 0; index < entries.length; index++) {
+      const element = entries[index];
+      var resourceIndex = element.resourcesList.findIndex(x => x.id == resourceID);
+      if ( resourceIndex != -1 ) {
+        if (element.resourcesList.length > 1) {
+          sharedEntriesTotal += element.annual;
+          sharedEntriesList.push(element);
+        } else {
+          personalEntriesTotal +=  element.annual;
+          personalEntriesList.push(element);
+          }      
+      }
+    }
+    return {sharedEntriesTotal: sharedEntriesTotal, 
+              sharedEntriesList: sharedEntriesList, 
+              personalEntriesTotal: personalEntriesTotal, 
+              personalEntriesList: personalEntriesList
+            };
+  }
 }
