@@ -4,6 +4,7 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/database';
 import { Router } from '@angular/router';
+import { Entry } from '../models/entry.model';
 @Injectable({
   providedIn: 'root'
 })
@@ -207,26 +208,27 @@ export class BudgetsService {
   }
 
   getPersonalBudget(resourceID: number, budget: Budget) {
-    const expenses = budget.expenses;
-    const incomes = budget.incomes;
+    const expenses: Entry[] = budget.expenses;
+    const incomes: Entry[] = budget.incomes;
     const resourceName = this.getEntryTypeDescription(resourceID, budget.resources);
     const expensesObject = this.getEntriesListAndTotal(expenses, resourceID);
     const incomesObject = this.getEntriesListAndTotal(incomes, resourceID);
   
-    const personalBudgetObject = {resourceName: resourceName, 
+    var personalBudgetObject = {resourceName: resourceName, 
                                     personalExpensesList: expensesObject.personalEntriesList, personalExpensesTotal: expensesObject.personalEntriesTotal, 
                                     sharedExpensesList: expensesObject.sharedEntriesList, sharedExpensesTotal: expensesObject.sharedEntriesTotal,
                                     personalIncomesList: incomesObject.personalEntriesList, personalIncomesTotal: incomesObject.personalEntriesTotal, 
                                     sharedIncomesList: incomesObject.sharedEntriesList, sharedIncomesTotal: incomesObject.sharedEntriesTotal
                                   };
-    // console.log("In get personnal Budget: ", personalBudgetObject );
+    console.log("In get personnal Budget: ", personalBudgetObject );
     return personalBudgetObject;
   }
 
-  getEntriesListAndTotal(entries: any, resourceID: number) {
-    var personalEntriesList = new Array();
+  getEntriesListAndTotal(entries: Entry[], resourceID: number) {
+    console.log("In get Entries list and total: ", entries);
+    var personalEntriesList: Entry[] = [];
     var personalEntriesTotal: number = 0;
-    var sharedEntriesList= new Array();
+    var sharedEntriesList: Entry[] = [];
     var sharedEntriesTotal: number = 0;
     for (let index = 0; index < entries.length; index++) {
       const element = entries[index];
@@ -236,7 +238,7 @@ export class BudgetsService {
           sharedEntriesTotal += element.annual;
           sharedEntriesList.push(element);
         } else {
-          personalEntriesTotal +=  element.annual;
+          personalEntriesTotal += element.annual;
           personalEntriesList.push(element);
           }      
       }
