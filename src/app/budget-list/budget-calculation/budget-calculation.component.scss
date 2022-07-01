@@ -33,6 +33,10 @@ th, td {
     font-weight: normal;
 }
 
+th {
+    background-color: rgb(25, 25, 25);
+}
+
 table {
     width: 100%;
 }
@@ -47,6 +51,11 @@ table {
     color: black; 
     font-size: 24px; 
     font-weight: bolder;
+}
+
+input {
+    height: 30px;
+    color: black;
 }
 
 // accordion

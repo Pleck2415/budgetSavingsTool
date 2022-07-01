@@ -23,7 +23,7 @@ export class BudgetFormComponent implements OnInit  {
   budgetCalculation: boolean = false;
 
   openEntryForm: boolean = false;
-  entryType: string;
+  entryCategory: string;
   entryTypeFR: string;
   bugetEntryTypes = new Array();
   budgetEntryFrequecies = new Array();
@@ -228,9 +228,9 @@ export class BudgetFormComponent implements OnInit  {
     this.currentEntryFrequencyId = null;
     this.getBudgetControlTables();
     this.openEntryForm = true;
-    this.entryType = type;
+    this.entryCategory = type;
     var typeID: number = 0;
-    if (this.entryType === "incomes") {
+    if (this.entryCategory === "incomes") {
       this.entryTypeFR = "Revenus";
       typeID = 1;
     } else {
@@ -269,7 +269,7 @@ export class BudgetFormComponent implements OnInit  {
       this.newEntry = {type: type, resourcesText: resource, resourcesList: this.budgetEntryResources, 
           amount: amount, frequency: frequency, annual: annual};
   
-      switch (this.entryType) {
+      switch (this.entryCategory) {
         case("incomes"): {
           this.incomesList.push(this.newEntry);
           this.loadIncomesGridsData();

@@ -30,6 +30,7 @@ export class BudgetCalculationComponent implements OnInit {
   viewAllSharedIncomesFrequencies: boolean = false;
 
   currentEntryFrequencyId: number = 0;
+  currentEntryCategory: string = "";
   totalAnnualExpenses: number = 0;
   expensePerParts: number = 0;
   partZero: number = 0;
@@ -102,19 +103,19 @@ export class BudgetCalculationComponent implements OnInit {
     });
   }
 
-  getPayerParts(event) {
-    const input = event.target as HTMLInputElement;
-    const parts: number = +input.value;
-    var payer: string = "";
-    var payerList = new Array();
-    for (let index = 0; index < (parts); index++) {
-      var payerNumber = index + 1;
-      payer = "Payeur-" + +payerNumber;
-      payerList.push({id: index, payer: payer});
-    }
-    this.hasParts = true;
-    this.payerParts = payerList;
-  }
+  // getPayerParts(event) {
+  //   const input = event.target as HTMLInputElement;
+  //   const parts: number = +input.value;
+  //   var payer: string = "";
+  //   var payerList = new Array();
+  //   for (let index = 0; index < (parts); index++) {
+  //     var payerNumber = index + 1;
+  //     payer = "Payeur-" + +payerNumber;
+  //     payerList.push({id: index, payer: payer});
+  //   }
+  //   this.hasParts = true;
+  //   this.payerParts = payerList;
+  // }
 
   onChangeResource() {
     var resourceID: number = document.getElementById('resource')['value'];

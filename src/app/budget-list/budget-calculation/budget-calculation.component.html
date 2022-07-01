@@ -38,15 +38,34 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <label for="resource">Sélectionnez la ressource: </label>
                         </div>
-                        <div class="col-md-9">
-                            <select id="resource" class="form-control frequency-generate" (change)="onChangeResource()">
+                        <div class="col-md-4">
+                            <select id="resource" class="form-control frequency-generate">
                                 <option value="" selected="selected">--Sélectionnez--</option>
                                 <option *ngFor="let resource of personalBudgetResources;" value="{{resource.id}}">{{resource.description}}</option>
                             </select><br>
                         </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="incomsPart">Pourcentage des revenus paratgés:</label>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="number" id="incomesPart" min="0" max="100" class=""><span>&nbsp;%</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="expensesPart">Pourcentage des dépenses paratgées:</label>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="number" id="expensesPart" min="0" max="100" class=""><span>&nbsp;%</span>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="button" class="btn btn-dark btn-add" (click)="onChangeResource()"><i class="bi bi-calculator-fill"></i>&nbsp;&nbsp;Calculer</button>
+                        </div><br><br>
                     </div>
                     <div class="row" *ngIf="selectedResourceName">
                         <div class="row">
@@ -67,13 +86,16 @@
                                                 <table>
                                                     <tr>
                                                         <th>Description</th>
+                                                        <th>Catégorie</th>
                                                         <th class="td-amount">Montant</th>
                                                     </tr>
                                                     <tr *ngFor="let persoEntry of selectedResourceBudget.personalIncomesList;">
                                                         <td>{{persoEntry.type}}</td>
+                                                        <td>{{persoEntry.category}}</td>
                                                         <td class="td-amount">{{persoEntry.annual}} $</td>
                                                     </tr>
                                                     <tr>
+                                                        <td class="td-amount"></td>
                                                         <td class="td-amount"><b>Total</b></td>
                                                         <td class="td-amount"><b>{{selectedResourceBudget.personalIncomesTotal}} $</b></td><br>
                                                     </tr>
@@ -133,13 +155,16 @@
                                                 <table>
                                                     <tr>
                                                         <th>Description</th>
+                                                        <th>Catégorie</th>
                                                         <th class="td-amount">Montant</th>
                                                     </tr>
                                                     <tr *ngFor="let persoEntry of selectedResourceBudget.personalExpensesList;">
                                                         <td>{{persoEntry.type}}</td>
+                                                        <td>{{persoEntry.category}}</td>
                                                         <td class="td-amount">{{persoEntry.annual}} $</td>
                                                     </tr>
                                                     <tr>
+                                                        <td class="td-amount"><b>=></b></td>
                                                         <td class="td-amount"><b>Total</b></td>
                                                         <td class="td-amount"><b>{{selectedResourceBudget.personalExpensesTotal}} $</b></td><br>
                                                     </tr>
@@ -199,13 +224,16 @@
                                                 <table>
                                                     <tr>
                                                         <th>Description</th>
+                                                        <th>Catégorie</th>
                                                         <th class="td-amount">Montant</th>
                                                     </tr>
                                                     <tr *ngFor="let sharedEntry of selectedResourceBudget.sharedExpensesList;">
                                                         <td>{{sharedEntry.type}}</td>
+                                                        <td>{{sharedEntry.category}}</td>
                                                         <td class="td-amount">{{sharedEntry.annual}} $</td>
                                                     </tr>
                                                     <tr>
+                                                        <td class="td-amount"><b>=></b></td>
                                                         <td class="td-amount"><b>Total</b></td>
                                                         <td class="td-amount"><b>{{selectedResourceBudget.sharedExpensesTotal}} $</b></td><br>
                                                     </tr>

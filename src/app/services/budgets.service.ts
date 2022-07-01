@@ -208,8 +208,8 @@ export class BudgetsService {
   }
 
   getPersonalBudget(resourceID: number, budget: Budget) {
-    const expenses: Entry[] = budget.expenses;
-    const incomes: Entry[] = budget.incomes;
+    const expenses = budget.expenses;
+    const incomes  = budget.incomes;
     const resourceName = this.getEntryTypeDescription(resourceID, budget.resources);
     const expensesObject = this.getEntriesListAndTotal(expenses, resourceID);
     const incomesObject = this.getEntriesListAndTotal(incomes, resourceID);
@@ -224,11 +224,11 @@ export class BudgetsService {
     return personalBudgetObject;
   }
 
-  getEntriesListAndTotal(entries: Entry[], resourceID: number) {
+  getEntriesListAndTotal(entries, resourceID: number) {
     console.log("In get Entries list and total: ", entries);
-    var personalEntriesList: Entry[] = [];
+    var personalEntriesList = [];
     var personalEntriesTotal: number = 0;
-    var sharedEntriesList: Entry[] = [];
+    var sharedEntriesList = [];
     var sharedEntriesTotal: number = 0;
     for (let index = 0; index < entries.length; index++) {
       const element = entries[index];
@@ -236,9 +236,11 @@ export class BudgetsService {
       if ( resourceIndex != -1 ) {
         if (element.resourcesList.length > 1) {
           sharedEntriesTotal += element.annual;
+          element["category"] = 'Partagé';
           sharedEntriesList.push(element);
         } else {
           personalEntriesTotal += element.annual;
+          element["category"] = 'Personnel';
           personalEntriesList.push(element);
           }      
       }
