@@ -4,7 +4,6 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/database';
 import { Router } from '@angular/router';
-import { Entry } from '../models/entry.model';
 @Injectable({
   providedIn: 'root'
 })
@@ -189,7 +188,6 @@ export class BudgetsService {
     firebase.database().ref(tableName + "/" + userID + "/").limitToLast(1)
     .on('child_added', function(data) {
         const myID = data.val().id;
-        // console.log('Query in service: ', myID);
     if( myID == null) {
         nextID = 0;
     } else {
@@ -207,48 +205,42 @@ export class BudgetsService {
     return resourcesNumber;
   }
 
-  getPersonalBudget(resourceID: number, budget: Budget) {
+  getPersonalBudget(resourceID: number, budget: Budget, expensesPart: number, incomesPart: number) {
     const expenses = budget.expenses;
     const incomes  = budget.incomes;
     const resourceName = this.getEntryTypeDescription(resourceID, budget.resources);
-    const expensesObject = this.getEntriesListAndTotal(expenses, resourceID);
-    const incomesObject = this.getEntriesListAndTotal(incomes, resourceID);
+    const expensesObject = this.getEntriesListAndTotal(expenses, resourceID, expensesPart);
+    const incomesObject = this.getEntriesListAndTotal(incomes, resourceID, incomesPart);
   
     var personalBudgetObject = {resourceName: resourceName, 
-                                    personalExpensesList: expensesObject.personalEntriesList, personalExpensesTotal: expensesObject.personalEntriesTotal, 
-                                    sharedExpensesList: expensesObject.sharedEntriesList, sharedExpensesTotal: expensesObject.sharedEntriesTotal,
-                                    personalIncomesList: incomesObject.personalEntriesList, personalIncomesTotal: incomesObject.personalEntriesTotal, 
+                                  sharedExpensesList: expensesObject.sharedEntriesList, sharedExpensesTotal: expensesObject.sharedEntriesTotal,
                                     sharedIncomesList: incomesObject.sharedEntriesList, sharedIncomesTotal: incomesObject.sharedEntriesTotal
                                   };
-    console.log("In get personnal Budget: ", personalBudgetObject );
     return personalBudgetObject;
   }
 
-  getEntriesListAndTotal(entries, resourceID: number) {
-    console.log("In get Entries list and total: ", entries);
-    var personalEntriesList = [];
-    var personalEntriesTotal: number = 0;
+  getEntriesListAndTotal(entries, resourceID: number, part: number) {
     var sharedEntriesList = [];
     var sharedEntriesTotal: number = 0;
     for (let index = 0; index < entries.length; index++) {
-      const element = entries[index];
+      var element = entries[index];
       var resourceIndex = element.resourcesList.findIndex(x => x.id == resourceID);
       if ( resourceIndex != -1 ) {
+        var amount = element.annual;
+        // sharedEntriesTotal += element.annual;
         if (element.resourcesList.length > 1) {
-          sharedEntriesTotal += element.annual;
-          element["category"] = 'Partagé';
-          sharedEntriesList.push(element);
+          element["category"] = 'Partagé' + " (" + part + " % de " + amount + " $)";
+          amount = (amount * part / 100);
+          element.annual = amount;
         } else {
-          personalEntriesTotal += element.annual;
           element["category"] = 'Personnel';
-          personalEntriesList.push(element);
-          }      
+          }
+        sharedEntriesTotal += amount;
+        sharedEntriesList.push(element);    
       }
     }
     return {sharedEntriesTotal: sharedEntriesTotal, 
-              sharedEntriesList: sharedEntriesList, 
-              personalEntriesTotal: personalEntriesTotal, 
-              personalEntriesList: personalEntriesList
+              sharedEntriesList: sharedEntriesList
             };
   }
 }

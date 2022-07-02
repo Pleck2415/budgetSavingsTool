@@ -19,15 +19,12 @@ export class BudgetCalculationComponent implements OnInit {
   hasParts: boolean = false;
   budgetEntryFrequencies = new Array();
 
-  allFrequencies: string = "Voir toutes les fréquences";
-  allSharedFrequencies: string = "Voir toutes les fréquences";
+  allExpensesFrequencies: string = "Voir toutes les fréquences";
   allIncomesFrequencies: string = "Voir toutes les fréquences";
-  allSharedIncomesFrequencies: string = "Voir toutes les fréquences";
 
-  viewAllFrequencies: boolean = false;
-  viewAllSharedFrequencies: boolean = false;
+  viewAllExpensesFrequencies: boolean = false;
   viewAllIncomesFrequencies: boolean = false;
-  viewAllSharedIncomesFrequencies: boolean = false;
+
 
   currentEntryFrequencyId: number = 0;
   currentEntryCategory: string = "";
@@ -41,16 +38,14 @@ export class BudgetCalculationComponent implements OnInit {
   personalBudgetResources = new Array();
   selectedResourceName: string = "";
   selectedResourceBudget: any;
-  selectedResourcePersonalExpenses: number = 0;
-  selectedResourcePersonalFrequency: string = "";
-  selectedResourcePersonalAllFrequencies: any[] = [];
-  selectedResourceSharedExpenses: number = 0;
-  selectedResourceSharedFrequency: string = "";
-  selectedResourceSharedAllFrequencies: any[] = []; 
+
+  selectedResourceExpenses: number = 0;
+  selectedResourceExpensesFrequency: string = "";
+  selectedResourceAllFrequenciesExpenses: any[] = []; 
   
-  selectedResourcePersonalIncomes: number = 0;
-  selectedResourcePersonalIncomesFrequency: string = "";
-  selectedResourcePersonalAllIncomesFrequencies: any[] = [];
+  selectedResourceIncomes: number = 0;
+  selectedResourceIncomesFrequency: string = "";
+  selectedResourceAllIncomesFrequencies: any[] = [];
 
   constructor(private formBuilder: FormBuilder, private budgetsService: BudgetsService) { 
     this.currentBudget = this.budgetsService.currentBudget;
@@ -103,20 +98,6 @@ export class BudgetCalculationComponent implements OnInit {
     });
   }
 
-  // getPayerParts(event) {
-  //   const input = event.target as HTMLInputElement;
-  //   const parts: number = +input.value;
-  //   var payer: string = "";
-  //   var payerList = new Array();
-  //   for (let index = 0; index < (parts); index++) {
-  //     var payerNumber = index + 1;
-  //     payer = "Payeur-" + +payerNumber;
-  //     payerList.push({id: index, payer: payer});
-  //   }
-  //   this.hasParts = true;
-  //   this.payerParts = payerList;
-  // }
-
   onChangeResource() {
     var resourceID: number = document.getElementById('resource')['value'];
     var resourceIndex = this.personalBudgetResources.findIndex(element => element.id == resourceID);
@@ -125,8 +106,13 @@ export class BudgetCalculationComponent implements OnInit {
     this.getPersonalBudget(resourceID);
   }
 
-  getPersonalBudget(resourcID) {
-    var personalBudget =  this.budgetsService.getPersonalBudget(resourcID, this.currentBudget);
+  getPersonalBudget(resourceID: number) {
+    var personalBudget = null;
+    this.generateBudgetResource();
+    const expensesPart: number = +document.getElementById('expensesPart')['value'];
+    const incomesPart: number = +document.getElementById('incomesPart')['value'];
+    // console.log("Parts null: ", expensesPart);
+    personalBudget =  this.budgetsService.getPersonalBudget(resourceID, this.currentBudget, expensesPart, incomesPart);
     this.selectedResourceBudget = personalBudget;
   }
 
@@ -134,50 +120,28 @@ export class BudgetCalculationComponent implements OnInit {
     var amount: number = 0;
     var frequency: number = 0;
     switch(type) {
-      case("personal-expenses"): {
-        amount = +this.selectedResourceBudget.personalExpensesTotal;
-        frequency = +document.getElementById('personnalFrequency')['value'];
-        this.selectedResourcePersonalFrequency = "";
-        this.selectedResourcePersonalFrequency = this.budgetsService.getFrequencyDescription(frequency).toLowerCase();
-        if (frequency != null) {
-          var freqPayments = (this.budgetsService.convertToAnnualExpenses(amount, frequency)).toFixed(2);
-          this.selectedResourcePersonalExpenses = +freqPayments;
-        }
-        break;
-      }
-      case("shared-expenses"): {
+      case("expenses"): {
         amount = +this.selectedResourceBudget.sharedExpensesTotal;
-        frequency = +document.getElementById('sharedFrequency')['value'];
-        this.selectedResourceSharedFrequency = "";
-        this.selectedResourceSharedFrequency = this.budgetsService.getFrequencyDescription(frequency).toLowerCase();
+        frequency = +document.getElementById('expensesFrequency')['value'];
+        this.selectedResourceExpensesFrequency = "";
+        this.selectedResourceExpensesFrequency = this.budgetsService.getFrequencyDescription(frequency).toLowerCase();
         if (frequency != null) {
           var freqPayments = (this.budgetsService.convertToAnnualExpenses(amount, frequency)).toFixed(2);
-          this.selectedResourceSharedExpenses = +freqPayments;
+          this.selectedResourceExpenses = +freqPayments;
         }
         break;
       }
-      case("personal-incomes"): {
-        amount = +this.selectedResourceBudget.personalIncomesTotal;
-        frequency = +document.getElementById('personnalIncomesFrequency')['value'];
-        this.selectedResourcePersonalIncomesFrequency = "";
-        this.selectedResourcePersonalIncomesFrequency = this.budgetsService.getFrequencyDescription(frequency).toLowerCase();
+      case("incomes"): {
+        amount = +this.selectedResourceBudget.sharedIncomesTotal;
+        frequency = +document.getElementById('incomesFrequency')['value'];
+        this.selectedResourceIncomesFrequency = "";
+        this.selectedResourceIncomesFrequency = this.budgetsService.getFrequencyDescription(frequency).toLowerCase();
         if (frequency != null) {
           var freqPayments = (this.budgetsService.convertToAnnualExpenses(amount, frequency)).toFixed(2);
-          this.selectedResourcePersonalIncomes = +freqPayments;
+          this.selectedResourceIncomes = +freqPayments;
         }
         break;
       }
-      // case("shared-incomes"): {
-      //   amount = +this.selectedResourceBudget.sharedExpensesTotal;
-      //   frequency = +document.getElementById('sharedFrequency')['value'];
-      //   this.selectedResourceSharedFrequency = "";
-      //   this.selectedResourceSharedFrequency = this.budgetsService.getFrequencyDescription(frequency).toLowerCase();
-      //   if (frequency != null) {
-      //     var freqPayments = (this.budgetsService.convertToAnnualExpenses(amount, frequency)).toFixed(2);
-      //     this.selectedResourceSharedExpenses = +freqPayments;
-      //   }
-      //   break;
-      // }
     };
   }
 
@@ -201,29 +165,18 @@ export class BudgetCalculationComponent implements OnInit {
     });
 
     switch (type) {
-      case("personal-expenses"):{
-        this.viewAllFrequencies = viewAll;
-        this.allFrequencies = buttonText;
-        this.selectedResourcePersonalAllFrequencies = [];
-        this.selectedResourcePersonalAllFrequencies = allFrequencies;
-        break;
-      }
-      case("personal-incomes"):{
+      case("incomes"):{
         this.viewAllIncomesFrequencies = viewAll;
         this.allIncomesFrequencies = buttonText;
-        this.selectedResourcePersonalAllIncomesFrequencies = [];
-        this.selectedResourcePersonalAllIncomesFrequencies = allFrequencies;
+        this.selectedResourceAllIncomesFrequencies = [];
+        this.selectedResourceAllIncomesFrequencies = allFrequencies;
         break;
       }
-      case("shared-expenses"):{
-        this.viewAllSharedFrequencies = viewAll;
-        this.allSharedFrequencies = buttonText;
-        this.selectedResourceSharedAllFrequencies = [];
-        this.selectedResourceSharedAllFrequencies = allFrequencies;
-        break;
-      }
-      case("shared-incomes"):{
-        
+      case("expenses"):{
+        this.viewAllExpensesFrequencies = viewAll;
+        this.allExpensesFrequencies = buttonText;
+        this.selectedResourceAllFrequenciesExpenses = [];
+        this.selectedResourceAllFrequenciesExpenses = allFrequencies;
         break;
       }
     }
