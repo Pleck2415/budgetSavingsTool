@@ -126,7 +126,7 @@ export class BudgetCalculationComponent implements OnInit {
         this.selectedResourceExpensesFrequency = "";
         this.selectedResourceExpensesFrequency = this.budgetsService.getFrequencyDescription(frequency).toLowerCase();
         if (frequency != null) {
-          var freqPayments = (this.budgetsService.convertToAnnualExpenses(amount, frequency)).toFixed(2);
+          var freqPayments = (+this.budgetsService.convertToAnnualExpenses(amount, frequency)).toFixed(2);
           this.selectedResourceExpenses = +freqPayments;
         }
         break;
@@ -137,7 +137,7 @@ export class BudgetCalculationComponent implements OnInit {
         this.selectedResourceIncomesFrequency = "";
         this.selectedResourceIncomesFrequency = this.budgetsService.getFrequencyDescription(frequency).toLowerCase();
         if (frequency != null) {
-          var freqPayments = (this.budgetsService.convertToAnnualExpenses(amount, frequency)).toFixed(2);
+          var freqPayments = (+this.budgetsService.convertToAnnualExpenses(amount, frequency)).toFixed(2);
           this.selectedResourceIncomes = +freqPayments;
         }
         break;
@@ -158,7 +158,7 @@ export class BudgetCalculationComponent implements OnInit {
       }
     this.budgetEntryFrequencies.forEach(element => {
       var frequencyID: number = element.id;
-      var amount = (this.budgetsService.convertToAnnualExpenses(totalAmount, frequencyID)).toFixed(2);
+      var amount = (+this.budgetsService.convertToAnnualExpenses(totalAmount, frequencyID)).toFixed(2);
       var frequency = this.budgetsService.getFrequencyDescription(frequencyID);
       var freqObject = {frequency: frequency, amount: amount};
       allFrequencies.push(freqObject);

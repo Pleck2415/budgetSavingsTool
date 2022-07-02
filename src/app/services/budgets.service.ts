@@ -4,9 +4,11 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/database';
 import { Router } from '@angular/router';
+
 @Injectable({
   providedIn: 'root'
 })
+
 export class BudgetsService {
 
   frequencyList = [
@@ -95,7 +97,8 @@ export class BudgetsService {
         break;
       }
     };
-    return annualAmount;
+    var totalAmount = (Math.round((annualAmount + Number.EPSILON) * 100) / 100).toFixed(2);
+    return totalAmount;
   }
   
   convertToAnnualExpenses(amount: number, frequencyID: number) {
@@ -126,7 +129,7 @@ export class BudgetsService {
         break;
       }
     };
-    var totalAmount = Math.round((annualAmount + Number.EPSILON) * 100) / 100
+    var totalAmount = (Math.round((annualAmount + Number.EPSILON) * 100) / 100).toFixed(2);
     return totalAmount;
   }
 
@@ -182,10 +185,28 @@ export class BudgetsService {
   }
   
   getElementNextID() { 
-    const tableName: string = "budgets"    
+    const tableName: string = "budgets";
+
     var nextID = 0;    
     const userID = firebase.auth().currentUser.uid;
     firebase.database().ref(tableName + "/" + userID + "/").limitToLast(1)
+    .on('child_added', function(data) {
+        const myID = data.val().id;
+    if( myID == null) {
+        nextID = 0;
+    } else {
+        nextID = myID +1;
+        }
+    });
+    return nextID;
+  }
+
+  getEntryNextID(childTable: string) { 
+    const tableName: string = "budgets";
+    const budgetId = this.currentBudget.id;   
+    var nextID = 0;    
+    const userID = firebase.auth().currentUser.uid;
+    firebase.database().ref(tableName + "/" + userID + "/" + budgetId + "/" + childTable + "/").limitToLast(1)
     .on('child_added', function(data) {
         const myID = data.val().id;
     if( myID == null) {
@@ -213,8 +234,8 @@ export class BudgetsService {
     const incomesObject = this.getEntriesListAndTotal(incomes, resourceID, incomesPart);
   
     var personalBudgetObject = {resourceName: resourceName, 
-                                  sharedExpensesList: expensesObject.sharedEntriesList, sharedExpensesTotal: expensesObject.sharedEntriesTotal,
-                                    sharedIncomesList: incomesObject.sharedEntriesList, sharedIncomesTotal: incomesObject.sharedEntriesTotal
+                                  sharedExpensesList: expensesObject.sharedEntriesList, sharedExpensesTotal: expensesObject.sharedEntriesTotal.toFixed(2),
+                                    sharedIncomesList: incomesObject.sharedEntriesList, sharedIncomesTotal: incomesObject.sharedEntriesTotal.toFixed(2)
                                   };
     return personalBudgetObject;
   }

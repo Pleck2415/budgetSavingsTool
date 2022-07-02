@@ -266,8 +266,9 @@ export class BudgetFormComponent implements OnInit  {
 
     if (type != null || frequency != null) {
       this.openEntryForm = false;
-      this.newEntry = {type: type, resourcesText: resource, resourcesList: this.budgetEntryResources, 
-          amount: amount, frequency: frequency, annual: annual};
+      var entryId = this.budgetService.getEntryNextID(this.entryCategory);
+      this.newEntry = {id: entryId, type: type, resourcesText: resource, resourcesList: this.budgetEntryResources, 
+          amount: +amount, frequency: frequency, annual: +annual};
   
       switch (this.entryCategory) {
         case("incomes"): {
@@ -295,7 +296,32 @@ export class BudgetFormComponent implements OnInit  {
   }  
 
   deleteEntry(type: string) {
-
+    var gridApi: any;
+    var entryList: Entry[] = [];
+    switch(type) {
+      case('incomes'):{ gridApi = this.incomesGridApi; entryList = this.incomesList; break;}
+      case('expenses'):{ gridApi = this.expensesGridApi; entryList = this.expensesList; break;}
+    };
+    const selectedRow = gridApi.getSelectedRows();
+    if(selectedRow[0] === undefined) {
+      alert("Pas de ligne sélectionnée!");
+    } else {
+        if (confirm("Voulez-vous supprimer cette entrée?")) {
+          var entryId = selectedRow[0].id;
+          var entryIndex = entryList.findIndex(element => element.id == entryId);
+          if (entryIndex != -1) {
+            entryList.splice(entryIndex, 1);
+            switch(type) {
+              case('incomes'):{ this.incomesList = entryList; this.loadIncomesGridsData(); break;}
+              case('expenses'):{ this.expensesList = entryList; this.loadExpensesGridsData(); break;}
+            };
+          };
+          this.onSubmitBudget();
+          console.log('Entry Saved to database.');
+        } else {
+          console.log('Entry Not saved to database.');
+        }
+      };
   }
 
   onSubmitBudget() {
@@ -305,7 +331,7 @@ export class BudgetFormComponent implements OnInit  {
     this.budgetSave = this.budgetForm.value;
     this.budgetService.saveBudget(this.budgetSave);
     this.budgetFormDirty= false;
-    alert("Budget saved!");
+    alert("Budget enregistré!");
   }
 
   openControlTable(tableName: string) {

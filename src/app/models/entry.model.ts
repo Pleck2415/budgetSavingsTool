@@ -1,5 +1,6 @@
 export class Entry {
     constructor(
+    public id: number,
     public type: string,
     public resourcesText: string,
     public resourcesList: any[],

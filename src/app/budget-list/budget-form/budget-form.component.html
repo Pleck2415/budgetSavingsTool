@@ -241,7 +241,8 @@
                                             [rowData]="incomesRowData" 
                                             [columnDefs]="incomesColumnDefs"
                                             [pagination]="true"
-                                            [paginationPageSize]="25"                  
+                                            [paginationPageSize]="25"
+                                            rowSelection="single"                 
                                             (cellValueChanged)="incomeCellValueChanged($event)"
                                             (gridReady)="onIncomesGridReady($event)">
                                         </ag-grid-angular>
@@ -277,6 +278,7 @@
                                         [columnDefs]="expensesColumnDefs"
                                         [pagination]="true"
                                         [paginationPageSize]="25"
+                                        rowSelection="single"
                                         (selectionChanged)="openSelectedExpense()"
                                         (gridReady)="onExpensesGridReady($event)">
                                     </ag-grid-angular>
