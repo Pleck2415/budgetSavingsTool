@@ -27,8 +27,9 @@ export class BudgetFormComponent implements OnInit  {
   entryTypeFR: string;
   bugetEntryTypes = new Array();
   budgetEntryFrequecies = new Array();
-  budgetEntryResources = new Array();
-  budgetEntryResourcesText: string;
+  // budgetEntrypersons = new Array();
+  budgetEntryPersons: any[] = [];
+  budgetEntryPersonsText: string;
   budgetResources = new Array();
   errorField: string = "";
 
@@ -56,7 +57,7 @@ export class BudgetFormComponent implements OnInit  {
   incomesRowData: any;
   incomesColumnDefs = [
     {headerName: 'Type', field: 'type', width: 220, resizable: true, sortable: true, filter: true },
-    {headerName: 'Ressource', field: 'resourcesText', width: 160, resizable: true, sortable: true, filter: true },
+    {headerName: 'Ressource', field: 'personsText', width: 160, resizable: true, sortable: true, filter: true },
     {headerName: 'Montant', field: 'amount', cellStyle: { 'text-align': "right" }, width: 100, resizable: true, editable: true },
     {headerName: 'Fréquence', field: 'frequency', width: 140, resizable: true, sortable: true, filter: true },
     {headerName: 'Annuel', field: 'annual', cellStyle: { 'text-align': "right" }, width: 100, resizable: true },
@@ -65,7 +66,7 @@ export class BudgetFormComponent implements OnInit  {
   expensesRowData: any;
   expensesColumnDefs = [
     {headerName: 'Type', field: 'type', width: 220, resizable: true, sortable: true, filter: true },
-    {headerName: 'Ressource', field: 'resourcesText', width: 160, resizable: true, sortable: true, filter: true },
+    {headerName: 'Ressource', field: 'personsText', width: 160, resizable: true, sortable: true, filter: true },
     {headerName: 'Montant', field: 'amount', cellStyle: { 'text-align': "right" }, width: 100, resizable: true,  editable: true },
     {headerName: 'Fréquence', field: 'frequency', width: 140, resizable: true, sortable: true, filter: true },
     {headerName: 'Annuel', field: 'annual', cellStyle: { 'text-align': "right" }, width: 100, resizable: true },
@@ -130,7 +131,7 @@ export class BudgetFormComponent implements OnInit  {
     this.entryForm = this.formBuilder.group({
       type: [null, Validators.required],
       detail: [null],
-      resourcesText: [null, Validators.required],
+      personsText: [null, Validators.required],
       amount: [null],
       frequency: [null]
     });
@@ -223,6 +224,17 @@ export class BudgetFormComponent implements OnInit  {
 
   }
 
+  onChangeNumberOfPersons() {
+    var numberOfPersons: number = +document.getElementById('numberOfPersons')['value'];
+    var personsList: any[] = [];
+    var personObject: any;
+    for (let a = 0; a < numberOfPersons; a++) {
+      personObject = {number: a+1, personId: null, personName: ""};
+      personsList.push(personObject);
+    };
+    this.budgetEntryPersons = personsList;
+  }
+
   openAddEntry(type: string) {
     this.currentEntryTypeId = null;
     this.currentEntryFrequencyId = null;
@@ -252,22 +264,22 @@ export class BudgetFormComponent implements OnInit  {
     const type = this.budgetService.getEntryTypeDescription(this.currentEntryTypeId, this.bugetEntryTypes) + detailText;
     const frequency = this.budgetService.getFrequencyDescription(this.currentEntryFrequencyId);
 
-    var resource = "";
-    const len = this.budgetEntryResources.length;
+    var person = "";
+    const len = this.budgetEntryPersons.length;
     for (let index = 0; index < len; index++) {
-      const element = this.budgetEntryResources[index];
+      const element = this.budgetEntryPersons[index];
       if (index < (len-1)) {
-        resource += element.description + ", ";
+        person += element.description + ", ";
       } else {
-          resource += element.description;
+        person += element.description;
         }      
     };
-    this.budgetEntryResourcesText = resource;
+    this.budgetEntryPersonsText = person;
 
     if (type != null || frequency != null) {
       this.openEntryForm = false;
       var entryId = this.budgetService.getEntryNextID(this.entryCategory);
-      this.newEntry = {id: entryId, type: type, resourcesText: resource, resourcesList: this.budgetEntryResources, 
+      this.newEntry = {id: entryId, type: type, personsText: person, personsList: this.budgetEntryPersons, 
           amount: +amount, frequency: frequency, annual: +annual};
   
       switch (this.entryCategory) {
@@ -290,7 +302,7 @@ export class BudgetFormComponent implements OnInit  {
     }  else {
         this.errorField = "Valeur invalide pour 'Type' ou 'Fréquence'.";
       }
-    this.budgetEntryResources = [];
+    this.budgetEntryPersons = [];
     this.newEntry = null;
     this.initEntryForm();
   }  
@@ -374,22 +386,25 @@ export class BudgetFormComponent implements OnInit  {
     });
   }
 
-  onChangeEntryResource() {
-    this.budgetEntryResourcesText = "";
-    const resourceID = +document.getElementById('entry-resource')['value'];
-    if (resourceID != undefined) {
-      // var index = this.currentBudgetResources.findIndex(x => x.id === resourceID);
-      var newResource: boolean = true;
-      if (Array.isArray(this.budgetEntryResources) && this.budgetEntryResources) {      
-        this.budgetEntryResources.forEach(element => {
-          if (element.id == resourceID) {
-            newResource = false;
+  onChangeEntryPerson(personNumber: number) {
+    this.budgetEntryPersonsText = "";
+    const personID = +document.getElementById('entry-person')['value'];
+    if (personID != undefined) {
+
+      var newPerson: boolean = true;
+      if (Array.isArray(this.budgetEntryPersons) && this.budgetEntryPersons) {      
+        this.budgetEntryPersons.forEach(element => {
+          if (element.id == personID) {
+            newPerson = false;
           }
         });
       }
-      if (newResource) {
-        this.budgetEntryResources.push(this.budgetResources[resourceID]);
-        document.getElementById('entry-resource').setAttribute('value', "");
+      if (newPerson) {
+        var index = this.budgetEntryPersons.findIndex(x => x.number == personNumber);
+        // this.budgetEntryPersons.push(this.budgetResources[personID]);
+        this.budgetEntryPersons[index].personName = this.budgetResources[personID].description;
+        this.budgetEntryPersons[index].id = this.budgetResources[personID].id;
+        document.getElementById('entry-person').setAttribute('value', "");
       } else alert("Cette ressource est déjà sélectionnée!");
     }    
   }
@@ -419,10 +434,10 @@ export class BudgetFormComponent implements OnInit  {
     }
   }
   
-  removeEntryResource(resource) {
+  removeEntryPerson(person) {
     if (confirm('Voulez vous supprimer cette ressource ?')) {
-      var index = this.budgetEntryResources.findIndex(x => x.id == resource.id);
-      this.budgetEntryResources.splice(index, 1);
+      var index = this.budgetEntryPersons.findIndex(x => x.id == person.id);
+      this.budgetEntryPersons.splice(index, 1);
     }
   }
 }
