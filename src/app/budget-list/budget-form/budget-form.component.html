@@ -129,30 +129,47 @@
                                             <div class="row">
                                                 <div class="form-group">
                                                     <div class="col-md-5">
-                                                        <label for="type">Ressource : </label>
+                                                        <label for="nomberOfPersons"></label>
                                                     </div>
-                                                    <div class="col-md-7">                            
-                                                        <select id="entry-resource" class="form-control" (change)="onChangeEntryResource()" formControlName="resourcesText">
+                                                    <div class="col-md-7">
+                                                        <select id="numberOfPersons" class="form-control" (change)="onChangeNumberOfPersons()">
                                                             <option value="" selected="selected">--Sélectionnez--</option>
-                                                            <option *ngFor="let resource of currentBudgetResources; let indexOfelement=index;" value="{{resource.id}}">{{resource.description}}</option>
+                                                            <option value="1">1</option>
+                                                            <option value="2">2</option>
+                                                            <option value="3">3</option>
+                                                            <option value="4">4</option>
+                                                            <option value="5">5</option>
                                                         </select>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="row">
+                                            <div class="row" *ngFor="let person of budgetEntryPersons">
+                                                <div class="form-group">
+                                                    <div class="col-md-5">
+                                                        <label for="type">Personne #{{person.number}} : </label>
+                                                    </div>
+                                                    <div class="col-md-7">                            
+                                                        <select id="entry-person" class="form-control" (change)="onChangeEntryPerson(person.number)" formControlName="personsText">
+                                                            <option value="" selected="selected">--Sélectionnez--</option>
+                                                            <option *ngFor="let person of currentBudgetResources; let indexOfelement=index;" value="{{person.id}}">{{person.description}}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- <div class="row">
                                                 <div class="form-group" style="padding-left: 20px;">
                                                     <div class="col-md-12" style="width: 95%; padding-left: 5px; padding-top: 6px; height: 34px; border-radius: 4px; background-color: white;">
                                                         <table>
                                                             <tr>
-                                                                <th *ngFor="let entryResource of budgetEntryResources">
-                                                                    <button type="button" class="btn btn-toolBar" (click)="removeEntryResource(entryResource)" style="color: rgb(50, 50, 50); padding: 2px; font-size: 10px; border: 1px solid rgb(150, 150, 150);">{{entryResource.description}}&nbsp;<i class="glyphicon glyphicon-trash"></i></button>
+                                                                <th *ngFor="let entryPerson of budgetEntryPersons">
+                                                                    <button type="button" class="btn btn-toolBar" (click)="removeEntryPerson(entryPerson)" style="color: rgb(50, 50, 50); padding: 2px; font-size: 10px; border: 1px solid rgb(150, 150, 150);">{{entryPerson.personName}}&nbsp;<i class="glyphicon glyphicon-trash"></i></button>
                                                                 </th>
                                                             </tr>
                                                         </table>
 
                                                     </div>
                                                 </div>
-                                            </div>                                    
+                                            </div>                                     -->
                                             <div class="row">
                                                 <div class="form-group">
                                                     <div class="col-md-5">
