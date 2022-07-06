@@ -387,14 +387,16 @@ export class BudgetFormComponent implements OnInit  {
   }
 
   onChangeEntryPerson(personNumber: number) {
+    var personField: string = "person" + personNumber;
+    var resourceName: string = document.getElementById(personField)['value'];
+    console.log("On change entry person: ", resourceName);
     this.budgetEntryPersonsText = "";
-    const personID = +document.getElementById('entry-person')['value'];
-    if (personID != undefined) {
-
+       
+    if (resourceName != undefined && resourceName != '') {
       var newPerson: boolean = true;
       if (Array.isArray(this.budgetEntryPersons) && this.budgetEntryPersons) {      
         this.budgetEntryPersons.forEach(element => {
-          if (element.id == personID) {
+          if (element.personName === resourceName) {
             newPerson = false;
           }
         });
@@ -402,11 +404,24 @@ export class BudgetFormComponent implements OnInit  {
       if (newPerson) {
         var index = this.budgetEntryPersons.findIndex(x => x.number == personNumber);
         // this.budgetEntryPersons.push(this.budgetResources[personID]);
-        this.budgetEntryPersons[index].personName = this.budgetResources[personID].description;
-        this.budgetEntryPersons[index].id = this.budgetResources[personID].id;
-        document.getElementById('entry-person').setAttribute('value', "");
+        var bRIndex = this.currentBudgetResources.findIndex(y => y.description === resourceName);
+        this.budgetEntryPersons[index].personId = this.currentBudgetResources[bRIndex].id;
+        this.budgetEntryPersons[index].personName = this.currentBudgetResources[bRIndex].description;
+        
+        // document.getElementById(personField).setAttribute('value', "");
+        console.log("In New person: ", this.budgetEntryPersons);
       } else alert("Cette ressource est déjà sélectionnée!");
-    }    
+    }
+    var counter = 0;
+    var len = this.budgetEntryPersons.length;
+    this.budgetEntryPersons.forEach(element => {
+      if (counter < len) {
+        this.budgetEntryPersonsText += this.currentBudgetResources[bRIndex].description + ", ";
+      } else {
+        this.budgetEntryPersonsText += this.currentBudgetResources[bRIndex].description;
+      }      
+      counter += 1;
+    });   
   }
 
   confirmBudgetResource() {

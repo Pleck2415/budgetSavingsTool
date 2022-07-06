@@ -129,7 +129,7 @@
                                             <div class="row">
                                                 <div class="form-group">
                                                     <div class="col-md-5">
-                                                        <label for="nomberOfPersons"></label>
+                                                        <label for="nomberOfPersons">Nombre de personnes</label>
                                                     </div>
                                                     <div class="col-md-7">
                                                         <select id="numberOfPersons" class="form-control" (change)="onChangeNumberOfPersons()">
@@ -143,16 +143,24 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="row" *ngFor="let person of budgetEntryPersons">
-                                                <div class="form-group">
-                                                    <div class="col-md-5">
-                                                        <label for="type">Personne #{{person.number}} : </label>
-                                                    </div>
-                                                    <div class="col-md-7">                            
-                                                        <select id="entry-person" class="form-control" (change)="onChangeEntryPerson(person.number)" formControlName="personsText">
-                                                            <option value="" selected="selected">--Sélectionnez--</option>
-                                                            <option *ngFor="let person of currentBudgetResources; let indexOfelement=index;" value="{{person.id}}">{{person.description}}</option>
-                                                        </select>
+                                            <div class="row" *ngFor="let person of budgetEntryPersons; let personIndex = index;">
+                                                    <div class="form-group">                                                    
+                                                        <div class="col-md-5">
+                                                            <label for="person{{person.number}}">Personne #{{person.number}} :</label>
+                                                        </div>
+                                                        <div class="col-md-7">                            
+                                                            <select id="person{{person.number}}" class="form-control" (change)="onChangeEntryPerson(person.number)" formControlName="personsText">
+                                                                <option value="" selected="selected">--Sélectionnez--</option>
+                                                                <option *ngFor="let resource of currentBudgetResources;" value="{{resource.description}}">{{resource.description}}</option>
+                                                            </select>
+                                                        </div><br><br>
+                                                    <div class="form-group">                                                        
+                                                        <div class="col-md-5">
+                                                            <label for="percentage{{person.number}}">(%) pers. #{{person.number}} :</label>
+                                                        </div>
+                                                        <div class="col-md-7">
+                                                            <input type="number" class="form-control" min="0" max="100" id="percentage{{person.number}}">
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
