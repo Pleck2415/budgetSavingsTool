@@ -57,7 +57,7 @@ export class BudgetFormComponent implements OnInit  {
   incomesRowData: any;
   incomesColumnDefs = [
     {headerName: 'Type', field: 'type', width: 220, resizable: true, sortable: true, filter: true },
-    {headerName: 'Ressource', field: 'personsText', width: 160, resizable: true, sortable: true, filter: true },
+    {headerName: 'Personne(s)', field: 'personsText', width: 160, resizable: true, sortable: true, filter: true },
     {headerName: 'Montant', field: 'amount', cellStyle: { 'text-align': "right" }, width: 100, resizable: true, editable: true },
     {headerName: 'Fréquence', field: 'frequency', width: 140, resizable: true, sortable: true, filter: true },
     {headerName: 'Annuel', field: 'annual', cellStyle: { 'text-align': "right" }, width: 100, resizable: true },
@@ -66,7 +66,7 @@ export class BudgetFormComponent implements OnInit  {
   expensesRowData: any;
   expensesColumnDefs = [
     {headerName: 'Type', field: 'type', width: 220, resizable: true, sortable: true, filter: true },
-    {headerName: 'Ressource', field: 'personsText', width: 160, resizable: true, sortable: true, filter: true },
+    {headerName: 'Personne(s)', field: 'personsText', width: 160, resizable: true, sortable: true, filter: true },
     {headerName: 'Montant', field: 'amount', cellStyle: { 'text-align': "right" }, width: 100, resizable: true,  editable: true },
     {headerName: 'Fréquence', field: 'frequency', width: 140, resizable: true, sortable: true, filter: true },
     {headerName: 'Annuel', field: 'annual', cellStyle: { 'text-align': "right" }, width: 100, resizable: true },
@@ -174,8 +174,8 @@ export class BudgetFormComponent implements OnInit  {
   }
 
   getAnnulalTotal() {
-    this.incomesTotal = this.budgetService.getAnnualTotal(this.incomesList);
-    this.expensesTotal = this.budgetService.getAnnualTotal(this.expensesList);
+    this.incomesTotal = +(this.budgetService.getAnnualTotal(this.incomesList)).toFixed(2);
+    this.expensesTotal = +(this.budgetService.getAnnualTotal(this.expensesList)).toFixed(2);
   }
 
   loadExpensesGridsData() {
@@ -263,49 +263,95 @@ export class BudgetFormComponent implements OnInit  {
     }
     const type = this.budgetService.getEntryTypeDescription(this.currentEntryTypeId, this.bugetEntryTypes) + detailText;
     const frequency = this.budgetService.getFrequencyDescription(this.currentEntryFrequencyId);
+    const len: number = this.budgetEntryPersons.length;
 
+    var validatedObject = this.validatePercentages(len);
+    if (validatedObject.error != "") {
+      alert(validatedObject.error);
+    } else {
+        this.getPersonPercentages(validatedObject.percentagesList); 
+        this.budgetEntryPersonsText = this.getPersonNamesText(len);
+
+        if (type != null || frequency != null) {
+          this.openEntryForm = false;
+          var entryId = this.budgetService.getEntryNextID(this.entryCategory);
+          this.newEntry = {id: entryId, type: type, personsText: this.budgetEntryPersonsText, personsList: this.budgetEntryPersons, 
+              amount: +amount, frequency: frequency, annual: +annual};
+      
+          switch (this.entryCategory) {
+            case("incomes"): {
+              this.incomesList.push(this.newEntry);
+              this.loadIncomesGridsData();
+              break;
+            }
+            case("expenses"): {
+              this.expensesList.push(this.newEntry);
+              this.loadExpensesGridsData();
+              break;
+            }
+          }
+          this.budgetFormDirty = true;
+          this.errorField = "";
+          this.bugetEntryTypes = [];
+          this.getBudgetControlTables();
+        }  else {
+            this.errorField = "Valeur invalide pour 'Type' ou 'Fréquence'.";
+          }
+        this.budgetEntryPersons = [];
+        this.newEntry = null;
+        this.initEntryForm();
+    }    
+  }
+
+  getPersonNamesText(len: number) {
     var person = "";
-    const len = this.budgetEntryPersons.length;
     for (let index = 0; index < len; index++) {
       const element = this.budgetEntryPersons[index];
       if (index < (len-1)) {
-        person += element.description + ", ";
+        person += element.personName + "(" + element.percentage + "%), ";
       } else {
-        person += element.description;
+        person += element.personName + "(" + element.percentage + "%)";
         }      
     };
-    this.budgetEntryPersonsText = person;
+    return person;
+  }
 
-    if (type != null || frequency != null) {
-      this.openEntryForm = false;
-      var entryId = this.budgetService.getEntryNextID(this.entryCategory);
-      this.newEntry = {id: entryId, type: type, personsText: person, personsList: this.budgetEntryPersons, 
-          amount: +amount, frequency: frequency, annual: +annual};
-  
-      switch (this.entryCategory) {
-        case("incomes"): {
-          this.incomesList.push(this.newEntry);
-          this.loadIncomesGridsData();
-          break;
-        }
-        case("expenses"): {
-          this.expensesList.push(this.newEntry);
-          this.loadExpensesGridsData();
-          break;
+  getPersonPercentages(personPercentages: any) {
+    console.log("Get person percentages: ", personPercentages);
+    for (let indexA = 0; indexA < this.budgetEntryPersons.length; indexA++) {
+      const elementA = this.budgetEntryPersons[indexA];
+      for (let indexB = 0; indexB < personPercentages.length; indexB++) {
+        const elementB = personPercentages[indexB];
+        if (elementA.number == elementB.number) {
+          this.budgetEntryPersons[indexA].percentage = elementB.percentage;
         }
       }
-      this.budgetFormDirty = true;
-      this.errorField = "";
-      this.bugetEntryTypes = [];
-      this.getBudgetControlTables()
+    }
+    console.log("Updated Budget entry persons: ", this.budgetEntryPersons);      
+  }
 
-    }  else {
-        this.errorField = "Valeur invalide pour 'Type' ou 'Fréquence'.";
-      }
-    this.budgetEntryPersons = [];
-    this.newEntry = null;
-    this.initEntryForm();
-  }  
+  validatePercentages(numberOfPersons: number) {
+    var error: string = "";
+    var percentagesList = new Array();   
+    var totalPercentage: number = 0;
+    for (let a = 0; a < numberOfPersons; a++) {
+      var personNumber: number = a+1;
+      var percentageField: string = "percentage" + personNumber;
+      totalPercentage += +document.getElementById(percentageField)['value'];
+    }
+    console.log("In validate percentage total: ", totalPercentage, " %");
+    if (totalPercentage < 100) {
+      error = "Le total du pourcentage des parts doit être égal à 100!";
+    } else {                    
+        for (let a = 0; a < numberOfPersons; a++) {
+          var pNumber: number = a+1;
+          var percentageField: string = "percentage" + +(a+1);
+          var personPercentage: number = +document.getElementById(percentageField)['value'];
+          percentagesList.push({number: pNumber, percentage: personPercentage});
+        }
+    }
+    return {error, percentagesList};
+  }
 
   deleteEntry(type: string) {
     var gridApi: any;
@@ -412,16 +458,16 @@ export class BudgetFormComponent implements OnInit  {
         console.log("In New person: ", this.budgetEntryPersons);
       } else alert("Cette ressource est déjà sélectionnée!");
     }
-    var counter = 0;
-    var len = this.budgetEntryPersons.length;
-    this.budgetEntryPersons.forEach(element => {
-      if (counter < len) {
-        this.budgetEntryPersonsText += this.currentBudgetResources[bRIndex].description + ", ";
-      } else {
-        this.budgetEntryPersonsText += this.currentBudgetResources[bRIndex].description;
-      }      
-      counter += 1;
-    });   
+    // var counter = 0;
+    // var len = this.budgetEntryPersons.length;
+    // this.budgetEntryPersons.forEach(element => {
+    //   if (counter < len) {
+    //     this.budgetEntryPersonsText += this.currentBudgetResources[bRIndex].description + ", ";
+    //   } else {
+    //     this.budgetEntryPersonsText += this.currentBudgetResources[bRIndex].description;
+    //   }      
+    //   counter += 1;
+    // });   
   }
 
   confirmBudgetResource() {
