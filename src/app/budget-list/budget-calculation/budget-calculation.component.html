@@ -4,38 +4,22 @@
             <div class="col-md-12">
                 <div class="row">
                     <div class="col-md-4">
-                        <label for="resource">Sélectionnez la ressource: </label>
+                        <label for="person">Sélectionnez la personne: </label>
                     </div>
                     <div class="col-md-4">
-                        <select id="resource" class="form-control frequency-generate">
+                        <select id="person" class="form-control frequency-generate">
                             <option value="" selected="selected">--Sélectionnez--</option>
-                            <option *ngFor="let resource of personalBudgetResources;" value="{{resource.id}}">{{resource.description}}</option>
+                            <option *ngFor="let person of personalBudgetPersons;" value="{{person.id}}">{{person.description}}</option>
                         </select><br>
                     </div>
-                </div>
-                <div class="row">
                     <div class="col-md-4">
-                        <label for="incomsPart">Pourcentage des revenus paratgés:</label>
-                    </div>
-                    <div class="col-md-4">
-                        <input type="number" id="incomesPart" min="0" max="100" class=""><span>&nbsp;%</span>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-4">
-                        <label for="expensesPart">Pourcentage des dépenses paratgées:</label>
-                    </div>
-                    <div class="col-md-4">
-                        <input type="number" id="expensesPart" min="0" max="100" class=""><span>&nbsp;%</span>
-                    </div>
-                    <div class="col-md-4">
-                        <button type="button" class="btn btn-dark btn-add" (click)="onChangeResource()"><i class="bi bi-calculator-fill"></i>&nbsp;&nbsp;Calculer</button>
+                        <button type="button" class="btn btn-dark btn-add" (click)="onChangePerson()"><i class="bi bi-calculator-fill"></i>&nbsp;&nbsp;Calculer</button>
                     </div><br><br>
                 </div>
-                <div class="row" *ngIf="selectedResourceName">
+                <div class="row" *ngIf="selectedPersonName">
                     <div class="row">
                         <div class="col-md-12">
-                            <h1>Budget de {{selectedResourceName}}</h1>
+                            <h1>Budget de {{selectedPersonName}}</h1>
                         </div>
                     </div> 
                     <hr class="line-2">
@@ -54,7 +38,7 @@
                                                     <th>Catégorie</th>
                                                     <th class="td-amount">Montant</th>
                                                 </tr>
-                                                <tr *ngFor="let icomeEntry of selectedResourceBudget.sharedIncomesList;">
+                                                <tr *ngFor="let icomeEntry of selectedPersonBudget.sharedIncomesList;">
                                                     <td>{{icomeEntry.type}}</td>
                                                     <td>{{icomeEntry.category}}</td>
                                                     <td class="td-amount">{{icomeEntry.annual}} $</td>
@@ -62,7 +46,7 @@
                                                 <tr>
                                                     <td class="td-amount td-total"></td>
                                                     <td class="td-amount td-total"><b>Total</b></td>
-                                                    <td class="td-amount td-total"><b>{{selectedResourceBudget.sharedIncomesTotal}} $</b></td><br>
+                                                    <td class="td-amount td-total"><b>{{selectedPersonBudget.sharedIncomesTotal}} $</b></td><br>
                                                 </tr>
                                             </table><br>
                                         </div>
@@ -73,7 +57,7 @@
                                                 <div class="col-md-12">
                                                     <div class="row">
                                                         <div class="col-md-6">
-                                                            <label for="incomesFrequency">Sélectionnez la fréquence des entrées de salaire : </label>
+                                                            <label for="incomesFrequency">Sélectionnez la fréquence des entrées de revenus : </label>
                                                         </div>
                                                         <div class="col-md-4">
                                                             <select id="incomesFrequency" class="form-control frequency-generate" (change)="onChangeEntriesFrequency('incomes')">
@@ -93,7 +77,7 @@
                                         <div class="col-md-4">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <button type="button" class="btn btn-dark btn-add" (click)="getAllFrequenciesAmount(viewAllIncomesFrequencies, 'incomes', selectedResourceBudget.sharedIncomesTotal)">{{allIncomesFrequencies}}</button><br><br>
+                                                    <button type="button" class="btn btn-dark btn-add" (click)="getAllFrequenciesAmount(viewAllIncomesFrequencies, 'incomes', selectedPersonBudget.sharedIncomesTotal)">{{allIncomesFrequencies}}</button><br><br>
                                                 </div>
                                             </div> 
                                             <div class="row" *ngIf="viewAllIncomesFrequencies">
@@ -123,7 +107,7 @@
                                                     <th>Catégorie</th>
                                                     <th class="td-amount">Montant</th>
                                                 </tr>
-                                                <tr *ngFor="let sharedEntry of selectedResourceBudget.sharedExpensesList;">
+                                                <tr *ngFor="let sharedEntry of selectedPersonBudget.sharedExpensesList;">
                                                     <td>{{sharedEntry.type}}</td>
                                                     <td>{{sharedEntry.category}}</td>
                                                     <td class="td-amount">{{sharedEntry.annual}} $</td>
@@ -131,7 +115,7 @@
                                                 <tr>
                                                     <td class="td-amount td-total"><b></b></td>
                                                     <td class="td-amount td-total"><b>Total</b></td>
-                                                    <td class="td-amount td-total"><b>{{selectedResourceBudget.sharedExpensesTotal}} $</b></td><br>
+                                                    <td class="td-amount td-total"><b>{{selectedPersonBudget.sharedExpensesTotal}} $</b></td><br>
                                                 </tr>
                                             </table><br>
                                         </div>
@@ -142,7 +126,7 @@
                                                 <div class="col-md-12">
                                                     <div class="row">
                                                         <div class="col-md-6">
-                                                            <label for="expensesFrequency">Sélectionnez la fréquence de paiements souhaitée : </label>
+                                                            <label for="expensesFrequency">Sélectionnez la fréquence de paiements : </label>
                                                         </div>
                                                         <div class="col-md-4">
                                                             <select id="expensesFrequency" class="form-control frequency-generate" (change)="onChangeEntriesFrequency('expenses')">
@@ -162,7 +146,7 @@
                                         <div class="col-md-4">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <button type="button" class="btn btn-dark btn-add" (click)="getAllFrequenciesAmount(viewAllExpensesFrequencies, 'expenses', selectedResourceBudget.sharedExpensesTotal)">{{allExpensesFrequencies}}</button><br><br>
+                                                    <button type="button" class="btn btn-dark btn-add" (click)="getAllFrequenciesAmount(viewAllExpensesFrequencies, 'expenses', selectedPersonBudget.sharedExpensesTotal)">{{allExpensesFrequencies}}</button><br><br>
                                                 </div>
                                             </div> 
                                             <div class="row" *ngIf="viewAllExpensesFrequencies">

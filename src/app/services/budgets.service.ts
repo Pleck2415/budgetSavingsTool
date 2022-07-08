@@ -97,7 +97,7 @@ export class BudgetsService {
         break;
       }
     };
-    var totalAmount = (Math.round((annualAmount + Number.EPSILON) * 100) / 100).toFixed(2);
+    var totalAmount: number = +Math.round(((annualAmount + Number.EPSILON) * 100) / 100).toFixed(2);
     return totalAmount;
   }
   
@@ -129,7 +129,7 @@ export class BudgetsService {
         break;
       }
     };
-    var totalAmount = (Math.round((annualAmount + Number.EPSILON) * 100) / 100).toFixed(2);
+    var totalAmount: number = +Math.round(((annualAmount + Number.EPSILON) * 100) / 100).toFixed(2);
     return totalAmount;
   }
 
@@ -226,32 +226,32 @@ export class BudgetsService {
     return resourcesNumber;
   }
 
-  getPersonalBudget(resourceID: number, budget: Budget, expensesPart: number, incomesPart: number) {
+  getPersonalBudget(personID: number, budget: Budget) {
     const expenses = budget.expenses;
     const incomes  = budget.incomes;
-    const resourceName = this.getEntryTypeDescription(resourceID, budget.resources);
-    const expensesObject = this.getEntriesListAndTotal(expenses, resourceID, expensesPart);
-    const incomesObject = this.getEntriesListAndTotal(incomes, resourceID, incomesPart);
+    const resourceName = this.getEntryTypeDescription(personID, budget.resources);
+    const expensesObject = this.getEntriesListAndTotal(expenses, personID);
+    const incomesObject = this.getEntriesListAndTotal(incomes, personID);
   
     var personalBudgetObject = {resourceName: resourceName, 
-                                  sharedExpensesList: expensesObject.sharedEntriesList, sharedExpensesTotal: expensesObject.sharedEntriesTotal.toFixed(2),
-                                    sharedIncomesList: incomesObject.sharedEntriesList, sharedIncomesTotal: incomesObject.sharedEntriesTotal.toFixed(2)
+                                  sharedExpensesList: expensesObject.sharedEntriesList, sharedExpensesTotal: expensesObject.sharedEntriesTotal,
+                                    sharedIncomesList: incomesObject.sharedEntriesList, sharedIncomesTotal: incomesObject.sharedEntriesTotal
                                   };
     return personalBudgetObject;
   }
 
-  getEntriesListAndTotal(entries, resourceID: number, part: number) {
+  getEntriesListAndTotal(entries, personID: number) {
     var sharedEntriesList = [];
     var sharedEntriesTotal: number = 0;
     for (let index = 0; index < entries.length; index++) {
       var element = entries[index];
-      var resourceIndex = element.resourcesList.findIndex(x => x.id == resourceID);
-      if ( resourceIndex != -1 ) {
-        var amount = element.annual;
-        // sharedEntriesTotal += element.annual;
-        if (element.resourcesList.length > 1) {
+      var personIndex = element.personsList.findIndex(x => x.personId == personID);
+      if ( personIndex != -1 ) {
+        var part = element.personsList[personIndex].percentage;
+        var amount = +(element.annual).toFixed(2);
+        if (element.personsList.length > 1) {
           element["category"] = 'Partagé' + " (" + part + " % de " + amount + " $)";
-          amount = (amount * part / 100);
+          amount = +(amount * part / 100).toFixed(2);
           element.annual = amount;
         } else {
           element["category"] = 'Personnel';

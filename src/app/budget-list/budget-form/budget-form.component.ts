@@ -81,6 +81,11 @@ export class BudgetFormComponent implements OnInit  {
     this.getAnnulalTotal();
   }
 
+  sizeToFit() {
+    this.incomesGridApi.sizeColumnsToFit();
+    this.expensesGridApi.sizeColumnsToFit();
+  }
+
   initForm() {
     const nextId = this.budgetService.getElementNextID();
     this.budgetForm = this.formBuilder.group({
@@ -218,6 +223,7 @@ export class BudgetFormComponent implements OnInit  {
   onExpensesGridReady(params) {
     // To access the grids API
     this.expensesGridApi = params.api;
+    this.sizeToFit();
   }
 
   openSelectedExpense() {
@@ -413,7 +419,6 @@ export class BudgetFormComponent implements OnInit  {
   }
 
   openCalculationForm() {
-    // this.router.navigate(['/budget/calculation']);
     this.budgetCalculation = true;
   }
 
@@ -449,25 +454,12 @@ export class BudgetFormComponent implements OnInit  {
       }
       if (newPerson) {
         var index = this.budgetEntryPersons.findIndex(x => x.number == personNumber);
-        // this.budgetEntryPersons.push(this.budgetResources[personID]);
         var bRIndex = this.currentBudgetResources.findIndex(y => y.description === resourceName);
         this.budgetEntryPersons[index].personId = this.currentBudgetResources[bRIndex].id;
         this.budgetEntryPersons[index].personName = this.currentBudgetResources[bRIndex].description;
-        
-        // document.getElementById(personField).setAttribute('value', "");
-        console.log("In New person: ", this.budgetEntryPersons);
+
       } else alert("Cette ressource est déjà sélectionnée!");
     }
-    // var counter = 0;
-    // var len = this.budgetEntryPersons.length;
-    // this.budgetEntryPersons.forEach(element => {
-    //   if (counter < len) {
-    //     this.budgetEntryPersonsText += this.currentBudgetResources[bRIndex].description + ", ";
-    //   } else {
-    //     this.budgetEntryPersonsText += this.currentBudgetResources[bRIndex].description;
-    //   }      
-    //   counter += 1;
-    // });   
   }
 
   confirmBudgetResource() {

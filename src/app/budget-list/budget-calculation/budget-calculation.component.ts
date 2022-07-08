@@ -12,7 +12,7 @@ export class BudgetCalculationComponent implements OnInit {
 
   budgetForm: FormGroup;
   currentBudget: Budget;
-  numberOfResources: number = 0;
+  numberOfPersons: number = 0;
   payerParts = new Array();
   payersTotal = new Array();
   currentFrequency: string = "";
@@ -35,9 +35,9 @@ export class BudgetCalculationComponent implements OnInit {
   calculReady: boolean = false;
   budgetGenerated: any[] = [];
   personalBudget = new Array();
-  personalBudgetResources = new Array();
-  selectedResourceName: string = "";
-  selectedResourceBudget: any;
+  personalBudgetPersons = new Array();
+  selectedPersonName: string = "";
+  selectedPersonBudget: any;
 
   selectedResourceExpenses: number = 0;
   selectedResourceExpensesFrequency: string = "";
@@ -53,7 +53,7 @@ export class BudgetCalculationComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.generateBudgetResource();
+    this.generateBudgetPerson();
   }
 
   initForm() {
@@ -66,7 +66,7 @@ export class BudgetCalculationComponent implements OnInit {
       description:  this.currentBudget.description,
       dateFrom:  this.currentBudget.dateFrom,
       dateTo:  this.currentBudget.dateTo,
-      resources:  this.currentBudget.resources,
+      persons:  this.currentBudget.resources,
       incomes:  this.currentBudget.incomes,
       expenses:  this.currentBudget.expenses
     });
@@ -83,9 +83,9 @@ export class BudgetCalculationComponent implements OnInit {
     this.currentBudget.resources = this.budgetsService.currentBudget.resources;
     this.currentBudget.incomes = this.budgetsService.currentBudget.incomes;
     this.currentBudget.expenses = this.budgetsService.currentBudget.expenses;
-    this.numberOfResources = this.budgetsService.getBudgetresourcesNumber(this.currentBudget);
+    this.numberOfPersons = this.budgetsService.getBudgetresourcesNumber(this.currentBudget);
 
-    if( this.numberOfResources == 0 || this.numberOfResources == undefined) {
+    if( this.numberOfPersons == 0 || this.numberOfPersons == undefined) {
       alert("Le calcul du budget nécessite au moins une ressource!");
       this.calculReady = false;      
     }
@@ -98,22 +98,20 @@ export class BudgetCalculationComponent implements OnInit {
     });
   }
 
-  onChangeResource() {
-    var resourceID: number = document.getElementById('resource')['value'];
-    var resourceIndex = this.personalBudgetResources.findIndex(element => element.id == resourceID);
-    const resourceName = this.personalBudgetResources[resourceIndex].description;
-    this.selectedResourceName = resourceName;
-    this.getPersonalBudget(resourceID);
+  onChangePerson() {
+    var personID: number = document.getElementById('person')['value'];
+    var personIndex = this.personalBudgetPersons.findIndex(element => element.id == personID);
+    const personName = this.personalBudgetPersons[personIndex].description;
+    this.selectedPersonName = personName;
+    this.getPersonalBudget(personID);
   }
 
-  getPersonalBudget(resourceID: number) {
+  getPersonalBudget(personID: number) {
     var personalBudget = null;
-    this.generateBudgetResource();
-    const expensesPart: number = +document.getElementById('expensesPart')['value'];
-    const incomesPart: number = +document.getElementById('incomesPart')['value'];
+    this.generateBudgetPerson();
     // console.log("Parts null: ", expensesPart);
-    personalBudget =  this.budgetsService.getPersonalBudget(resourceID, this.currentBudget, expensesPart, incomesPart);
-    this.selectedResourceBudget = personalBudget;
+    personalBudget =  this.budgetsService.getPersonalBudget(personID, this.currentBudget);
+    this.selectedPersonBudget = personalBudget;
   }
 
   onChangeEntriesFrequency(type: string) {
@@ -121,24 +119,24 @@ export class BudgetCalculationComponent implements OnInit {
     var frequency: number = 0;
     switch(type) {
       case("expenses"): {
-        amount = +this.selectedResourceBudget.sharedExpensesTotal;
+        amount = +(this.selectedPersonBudget.sharedExpensesTotal.toFixed(2));
         frequency = +document.getElementById('expensesFrequency')['value'];
         this.selectedResourceExpensesFrequency = "";
         this.selectedResourceExpensesFrequency = this.budgetsService.getFrequencyDescription(frequency).toLowerCase();
         if (frequency != null) {
-          var freqPayments = (+this.budgetsService.convertToAnnualExpenses(amount, frequency)).toFixed(2);
-          this.selectedResourceExpenses = +freqPayments;
+          var freqPayments: number = +this.budgetsService.convertToAnnualExpenses(amount, frequency);
+          this.selectedResourceExpenses = freqPayments;
         }
         break;
       }
       case("incomes"): {
-        amount = +this.selectedResourceBudget.sharedIncomesTotal;
+        amount = +(this.selectedPersonBudget.sharedIncomesTotal.toFixed(2));
         frequency = +document.getElementById('incomesFrequency')['value'];
         this.selectedResourceIncomesFrequency = "";
         this.selectedResourceIncomesFrequency = this.budgetsService.getFrequencyDescription(frequency).toLowerCase();
         if (frequency != null) {
-          var freqPayments = (+this.budgetsService.convertToAnnualExpenses(amount, frequency)).toFixed(2);
-          this.selectedResourceIncomes = +freqPayments;
+          var freqPayments: number = +this.budgetsService.convertToAnnualExpenses(amount, frequency);
+          this.selectedResourceIncomes = freqPayments;
         }
         break;
       }
@@ -182,9 +180,9 @@ export class BudgetCalculationComponent implements OnInit {
     }
   }
 
-  generateBudgetResource() {
+  generateBudgetPerson() {
     this.currentBudget.resources.forEach(element => {
-      this.personalBudgetResources.push(element);
+      this.personalBudgetPersons.push(element);
     });
   }
 }
