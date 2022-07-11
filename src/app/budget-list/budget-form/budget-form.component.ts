@@ -215,7 +215,7 @@ export class BudgetFormComponent implements OnInit  {
     const rowIndex = +event.rowIndex;
     const amount = +event.newValue;
     const freq = this.budgetService.getFrequencyId(event.data.frequency);
-    this.incomesRowData[rowIndex].annual = this.budgetService.convertToAnnualIncomes(amount, freq);
+    this.incomesRowData[rowIndex].annual = this.budgetService.convertToAnnualEntry(amount, freq);
     this.incomesGridApi.setRowData(this.incomesRowData);
     this.incomesTotal = this.budgetService.getAnnualTotal(this.incomesRowData);
   }
@@ -261,7 +261,7 @@ export class BudgetFormComponent implements OnInit  {
 
   addEntry() {
     const amount: number = document.getElementById('amount')['value'];
-    const annual = this.budgetService.convertToAnnualIncomes(+amount, +this.currentEntryFrequencyId);
+    const annual = this.budgetService.convertToAnnualEntry(+amount, +this.currentEntryFrequencyId);
     const detail = document.getElementById('detail')['value'];
     var detailText = detail;
     if (detail != "") {

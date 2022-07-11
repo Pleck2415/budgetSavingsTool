@@ -68,7 +68,7 @@ export class BudgetsService {
     return description;
   }
   
-  convertToAnnualIncomes(amount: number, frequencyID: number) {
+  convertToAnnualEntry(amount: number, frequencyID: number) {
     console.log("In convert amount: ", amount, " frequency: ", frequencyID );
     var annualAmount: number = 0;
     switch (frequencyID) {
