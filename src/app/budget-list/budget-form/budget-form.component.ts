@@ -282,7 +282,7 @@ export class BudgetFormComponent implements OnInit  {
           this.openEntryForm = false;
           var entryId = this.budgetService.getEntryNextID(this.entryCategory);
           this.newEntry = {id: entryId, type: type, personsText: this.budgetEntryPersonsText, personsList: this.budgetEntryPersons, 
-              amount: +amount, frequency: frequency, annual: +annual};
+              amount: amount, frequency: frequency, annual: annual};
       
           switch (this.entryCategory) {
             case("incomes"): {
@@ -345,7 +345,7 @@ export class BudgetFormComponent implements OnInit  {
       var percentageField: string = "percentage" + personNumber;
       totalPercentage += +document.getElementById(percentageField)['value'];
     }
-    console.log("In validate percentage total: ", totalPercentage, " %");
+    // console.log("In validate percentage total: ", totalPercentage, " %");
     if (totalPercentage < 100) {
       error = "Le total du pourcentage des parts doit être égal à 100!";
     } else {                    
@@ -438,6 +438,7 @@ export class BudgetFormComponent implements OnInit  {
   }
 
   onChangeEntryPerson(personNumber: number) {
+    var personPart = Math.round(100 / this.budgetEntryPersons.length).toFixed(2);
     var personField: string = "person" + personNumber;
     var resourceName: string = document.getElementById(personField)['value'];
     console.log("On change entry person: ", resourceName);
@@ -457,6 +458,8 @@ export class BudgetFormComponent implements OnInit  {
         var bRIndex = this.currentBudgetResources.findIndex(y => y.description === resourceName);
         this.budgetEntryPersons[index].personId = this.currentBudgetResources[bRIndex].id;
         this.budgetEntryPersons[index].personName = this.currentBudgetResources[bRIndex].description;
+        var fieldName = "percentage" + personNumber;
+        document.getElementById(fieldName).setAttribute("value", personPart);
 
       } else alert("Cette ressource est déjà sélectionnée!");
     }
